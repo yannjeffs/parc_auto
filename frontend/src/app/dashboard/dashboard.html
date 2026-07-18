@@ -1,0 +1,58 @@
+@if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+} @else {
+  <h1>Tableau de bord</h1>
+
+  <div class="kpi-grid">
+    @for (kpi of kpis; track kpi.label) {
+      <mat-card class="kpi-card" [ngClass]="kpi.colorClass">
+        <mat-icon class="kpi-icon">{{ kpi.icon }}</mat-icon>
+        <div class="kpi-value">{{ kpi.value }}</div>
+        <div class="kpi-label">{{ kpi.label }}</div>
+      </mat-card>
+    }
+  </div>
+
+  <div class="cost-grid">
+    <mat-card class="cost-card">
+      <mat-card-content>
+        <span class="cost-label">Coût maintenance — ce mois-ci</span>
+        <span class="cost-value">{{ coutMaintenanceMois | number }} FCFA</span>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="cost-card">
+      <mat-card-content>
+        <span class="cost-label">Coût carburant — ce mois-ci</span>
+        <span class="cost-value">{{ coutCarburantMois | number }} FCFA</span>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="alerts-card">
+    <mat-card-header>
+      <mat-card-title>Documents à surveiller</mat-card-title>
+      <mat-card-subtitle>Expirés ou expirant dans les 30 prochains jours</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (documentsAlerte.length === 0) {
+        <p class="empty-state">Aucun document à surveiller pour le moment. 👍</p>
+      } @else {
+        <mat-nav-list>
+          @for (doc of documentsAlerte; track doc.id) {
+            <a mat-list-item [routerLink]="['/vehicules', doc.vehicule]">
+              <mat-icon matListItemIcon [ngClass]="estExpire(doc) ? 'icon-danger' : 'icon-warn'">
+                {{ estExpire(doc) ? 'error' : 'schedule' }}
+              </mat-icon>
+              <span matListItemTitle>{{ doc.type_document }} — {{ doc.numero_document || 'Sans numéro' }}</span>
+              <span matListItemLine>
+                {{ estExpire(doc) ? 'Expiré le' : 'Expire le' }} {{ doc.date_expiration | date:'longDate' }}
+              </span>
+            </a>
+          }
+        </mat-nav-list>
+      }
+    </mat-card-content>
+  </mat-card>
+}

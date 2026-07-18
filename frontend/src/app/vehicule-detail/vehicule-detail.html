@@ -1,0 +1,144 @@
+@if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+} @else if (notFound) {
+  <div class="not-found">
+    <mat-icon>error_outline</mat-icon>
+    <p>Véhicule introuvable.</p>
+    <button mat-stroked-button (click)="retourListe()">Retour à la liste</button>
+  </div>
+} @else if (vehicule) {
+  <div class="page-header">
+    <button mat-icon-button (click)="retourListe()" aria-label="Retour">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1>{{ vehicule.immatriculation }}</h1>
+      <p class="subtitle">{{ vehicule.marque }} {{ vehicule.modele }} — {{ vehicule.annee }}</p>
+    </div>
+  </div>
+
+  <mat-tab-group>
+    <mat-tab label="Informations">
+      <div class="tab-content">
+        <div class="vehicule-photo-header">
+          @if (vehicule.photo) {
+            <img [src]="vehicule.photo" alt="Photo du véhicule" class="vehicule-photo" />
+          } @else {
+            <div class="vehicule-photo-placeholder">
+              <mat-icon>directions_car</mat-icon>
+            </div>
+          }
+        </div>
+        <mat-card>
+          <mat-card-content class="info-grid">
+            <div><span class="label">Statut</span><span>{{ vehicule.statut }}</span></div>
+            <div><span class="label">Type</span><span>{{ vehicule.type_vehicule }}</span></div>
+            <div><span class="label">Carburant</span><span>{{ vehicule.type_carburant }}</span></div>
+            <div><span class="label">Kilométrage</span><span>{{ vehicule.kilometrage_actuel | number }} km</span></div>
+            <div><span class="label">Site</span><span>{{ vehicule.site_affectation || '—' }}</span></div>
+            <div><span class="label">Conducteur actuel</span><span>{{ vehicule.conducteur_actuel || 'Aucun' }}</span></div>
+            <div><span class="label">N° châssis</span><span>{{ vehicule.numero_chassis }}</span></div>
+            <div><span class="label">Date d'acquisition</span><span>{{ vehicule.date_acquisition | date:'longDate' }}</span></div>
+            <div><span class="label">Prix d'acquisition</span><span>{{ vehicule.prix_acquisition | number }} FCFA</span></div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Maintenance ({{ maintenances.length }})">
+      <div class="tab-content">
+        <p class="summary">Coût total historique : <strong>{{ coutTotalMaintenance | number }} FCFA</strong></p>
+        <table mat-table [dataSource]="maintenances">
+          <ng-container matColumnDef="date_intervention">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let m">{{ m.date_intervention | date:'shortDate' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="type_maintenance">
+            <th mat-header-cell *matHeaderCellDef>Type</th>
+            <td mat-cell *matCellDef="let m">{{ m.type_maintenance }}</td>
+          </ng-container>
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>Description</th>
+            <td mat-cell *matCellDef="let m">{{ m.description }}</td>
+          </ng-container>
+          <ng-container matColumnDef="cout">
+            <th mat-header-cell *matHeaderCellDef>Coût</th>
+            <td mat-cell *matCellDef="let m">{{ m.cout | number }} FCFA</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="maintenanceColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: maintenanceColumns;"></tr>
+        </table>
+        @if (maintenances.length === 0) {
+          <p class="empty-state">Aucun historique de maintenance.</p>
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Carburant ({{ pleinsCarburant.length }})">
+      <div class="tab-content">
+        <p class="summary">Coût total historique : <strong>{{ coutTotalCarburant | number }} FCFA</strong></p>
+        <table mat-table [dataSource]="pleinsCarburant">
+          <ng-container matColumnDef="date_plein">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let p">{{ p.date_plein | date:'short' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="litres">
+            <th mat-header-cell *matHeaderCellDef>Litres</th>
+            <td mat-cell *matCellDef="let p">{{ p.litres }} L</td>
+          </ng-container>
+          <ng-container matColumnDef="cout_total">
+            <th mat-header-cell *matHeaderCellDef>Coût total</th>
+            <td mat-cell *matCellDef="let p">{{ p.cout_total | number }} FCFA</td>
+          </ng-container>
+          <ng-container matColumnDef="prix_par_litre">
+            <th mat-header-cell *matHeaderCellDef>Prix / L</th>
+            <td mat-cell *matCellDef="let p">{{ p.prix_par_litre | number }} FCFA</td>
+          </ng-container>
+          <ng-container matColumnDef="station">
+            <th mat-header-cell *matHeaderCellDef>Station</th>
+            <td mat-cell *matCellDef="let p">{{ p.station }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="carburantColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: carburantColumns;"></tr>
+        </table>
+        @if (pleinsCarburant.length === 0) {
+          <p class="empty-state">Aucun plein enregistré.</p>
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Documents ({{ documents.length }})">
+      <div class="tab-content">
+        <table mat-table [dataSource]="documents">
+          <ng-container matColumnDef="type_document">
+            <th mat-header-cell *matHeaderCellDef>Type</th>
+            <td mat-cell *matCellDef="let d">{{ d.type_document }}</td>
+          </ng-container>
+          <ng-container matColumnDef="numero_document">
+            <th mat-header-cell *matHeaderCellDef>Numéro</th>
+            <td mat-cell *matCellDef="let d">{{ d.numero_document || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="date_expiration">
+            <th mat-header-cell *matHeaderCellDef>Expiration</th>
+            <td mat-cell *matCellDef="let d">{{ d.date_expiration | date:'longDate' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="est_valide">
+            <th mat-header-cell *matHeaderCellDef>Statut</th>
+            <td mat-cell *matCellDef="let d">
+              <span class="statut-chip" [ngClass]="d.est_valide ? 'statut-ok' : 'statut-danger'">
+                {{ d.est_valide ? 'Valide' : 'Expiré' }}
+              </span>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="documentColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: documentColumns;"></tr>
+        </table>
+        @if (documents.length === 0) {
+          <p class="empty-state">Aucun document enregistré.</p>
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+}

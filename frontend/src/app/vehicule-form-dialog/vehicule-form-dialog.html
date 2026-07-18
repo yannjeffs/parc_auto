@@ -1,0 +1,127 @@
+<h2 mat-dialog-title>{{ isEdition ? 'Modifier le véhicule' : 'Nouveau véhicule' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="form-grid">
+    <div class="photo-section">
+      @if (photoPreviewUrl) {
+        <img [src]="photoPreviewUrl" alt="Aperçu du véhicule" class="photo-preview" />
+      } @else {
+        <div class="photo-placeholder">
+          <mat-icon>directions_car</mat-icon>
+        </div>
+      }
+      <div class="photo-actions">
+        <button mat-stroked-button type="button" (click)="photoInput.click()">
+          <mat-icon>photo_camera</mat-icon>
+          {{ photoPreviewUrl ? 'Changer la photo' : 'Ajouter une photo' }}
+        </button>
+        @if (photoPreviewUrl) {
+          <button mat-button type="button" color="warn" (click)="removePhoto()">
+            Retirer
+          </button>
+        }
+        <input
+          #photoInput
+          type="file"
+          accept="image/*"
+          hidden
+          (change)="onPhotoSelected($event)"
+        />
+      </div>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Immatriculation</mat-label>
+      <input matInput formControlName="immatriculation" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>N° châssis</mat-label>
+      <input matInput formControlName="numero_chassis" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Marque</mat-label>
+      <input matInput formControlName="marque" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Modèle</mat-label>
+      <input matInput formControlName="modele" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Année</mat-label>
+      <input matInput type="number" formControlName="annee" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Type de véhicule</mat-label>
+      <mat-select formControlName="type_vehicule">
+        @for (opt of typeVehiculeOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Carburant</mat-label>
+      <mat-select formControlName="type_carburant">
+        @for (opt of typeCarburantOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre de places</mat-label>
+      <input matInput type="number" formControlName="nombre_places" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Statut</mat-label>
+      <mat-select formControlName="statut">
+        @for (opt of statutOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Kilométrage actuel</mat-label>
+      <input matInput type="number" formControlName="kilometrage_actuel" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Site d'affectation</mat-label>
+      <input matInput formControlName="site_affectation" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date d'acquisition</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="date_acquisition" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Prix d'acquisition (FCFA)</mat-label>
+      <input matInput type="number" formControlName="prix_acquisition" />
+    </mat-form-field>
+  </mat-dialog-content>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+      @if (isSaving) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        {{ isEdition ? 'Enregistrer' : 'Créer' }}
+      }
+    </button>
+  </mat-dialog-actions>
+</form>

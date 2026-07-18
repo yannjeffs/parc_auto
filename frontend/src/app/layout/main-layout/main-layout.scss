@@ -1,0 +1,32 @@
+.app-container {
+  height: 100vh;
+}
+
+.app-sidenav {
+  width: 240px;
+  padding-top: 0;
+}
+
+.sidenav-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.active-link {
+  background: rgba(0, 0, 0, 0.06);
+    gap: 1.5rem;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.content {
+  padding: 1.5rem;
+  background: #f4f5f7;
+  min-height: calc(100vh - 64px);
+}
