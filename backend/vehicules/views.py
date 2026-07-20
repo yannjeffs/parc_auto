@@ -4,6 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from config.permissions import IsGestionnaireOuAdmin
 from .models import Vehicule, Affectation
 from .serializers import VehiculeSerializer, VehiculeListSerializer, AffectationSerializer
+from .filters import AffectationFilter
 
 
 class VehiculeViewSet(viewsets.ModelViewSet):
@@ -26,8 +27,8 @@ class VehiculeViewSet(viewsets.ModelViewSet):
 
 
 class AffectationViewSet(viewsets.ModelViewSet):
-    queryset = Affectation.objects.all()
+    queryset = Affectation.objects.all().order_by("-date_debut")
     serializer_class = AffectationSerializer
     permission_classes = [IsGestionnaireOuAdmin]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["vehicule", "conducteur", "date_fin"]
+    filterset_class = AffectationFilter

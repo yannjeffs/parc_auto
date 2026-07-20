@@ -7,6 +7,7 @@ import { DashboardComponent } from './dashboard/dashboard';
 import { VehiculeListComponent } from './vehicule-list/vehicule-list';
 import { VehiculeDetailComponent } from './vehicule-detail/vehicule-detail';
 import { ConducteurListComponent } from './conducteurs/conducteur-list';
+import { AffectationListComponent } from './pages/affectations/affectation-list';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -19,6 +20,7 @@ export const routes: Routes = [
       { path: 'vehicules', component: VehiculeListComponent },
       { path: 'vehicules/:id', component: VehiculeDetailComponent },
       { path: 'conducteurs', component: ConducteurListComponent },
+      { path: 'affectations', component: AffectationListComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

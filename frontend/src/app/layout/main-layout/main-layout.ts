@@ -44,6 +44,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     { label: 'Tableau de bord', icon: 'dashboard', route: '/dashboard' },
     { label: 'Véhicules', icon: 'directions_car', route: '/vehicules' },
     { label: 'Conducteurs', icon: 'badge', route: '/conducteurs' },
+    { label: 'Affectations', icon: 'assignment_ind', route: '/affectations' },
     { label: 'Maintenance', icon: 'build', route: '/maintenance' },
     { label: 'Carburant', icon: 'local_gas_station', route: '/carburant' },
     { label: 'Documents', icon: 'description', route: '/documents' },

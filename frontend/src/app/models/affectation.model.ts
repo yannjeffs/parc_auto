@@ -1,6 +1,7 @@
 export interface Affectation {
   id: string;
   vehicule: string;
+  vehicule_immatriculation: string;
   conducteur: string;
   conducteur_nom: string;
   date_debut: string;
