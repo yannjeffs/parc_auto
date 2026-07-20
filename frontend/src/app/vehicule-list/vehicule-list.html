@@ -10,9 +10,15 @@
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
-    <button mat-flat-button color="primary" (click)="openCreateDialog()">
-      <mat-icon>add</mat-icon>
-      Nouveau véhicule
+    @if (authService.peutEcrire()) {
+      <button mat-flat-button color="primary" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        Nouveau véhicule
+      </button>
+    }
+    <button mat-stroked-button (click)="exporterExcel()" [disabled]="isExporting">
+      <mat-icon>download</mat-icon>
+      Exporter Excel
     </button>
   </div>
 </div>
@@ -59,12 +65,16 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let v">
-        <button mat-icon-button (click)="openEditDialog(v.id, $event)" aria-label="Modifier">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button (click)="confirmDelete(v.id, v.immatriculation, $event)" aria-label="Supprimer">
-          <mat-icon>delete</mat-icon>
-        </button>
+        @if (authService.peutEcrire()) {
+          <button mat-icon-button (click)="openEditDialog(v.id, $event)" aria-label="Modifier">
+            <mat-icon>edit</mat-icon>
+          </button>
+        }
+        @if (authService.peutSupprimer()) {
+          <button mat-icon-button (click)="confirmDelete(v.id, v.immatriculation, $event)" aria-label="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        }
       </td>
     </ng-container>
 

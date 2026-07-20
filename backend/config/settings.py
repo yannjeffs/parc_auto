@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'conducteurs',
     'maintenance',
     'carburant',
-    'documents'
+    'documents',
+    'rapports'
 ]
 
 REST_FRAMEWORK = {

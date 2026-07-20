@@ -1,13 +1,14 @@
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 
+from config.permissions import IsGestionnaireOuAdmin
 from .models import Vehicule, Affectation
 from .serializers import VehiculeSerializer, VehiculeListSerializer, AffectationSerializer
 
 
 class VehiculeViewSet(viewsets.ModelViewSet):
     queryset = Vehicule.objects.filter(is_active=True)
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsGestionnaireOuAdmin]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ["statut", "type_vehicule", "type_carburant"]
     search_fields = ["immatriculation", "marque", "modele", "numero_chassis"]
@@ -27,6 +28,6 @@ class VehiculeViewSet(viewsets.ModelViewSet):
 class AffectationViewSet(viewsets.ModelViewSet):
     queryset = Affectation.objects.all()
     serializer_class = AffectationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsGestionnaireOuAdmin]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["vehicule", "conducteur", "date_fin"]

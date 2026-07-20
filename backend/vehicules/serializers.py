@@ -5,11 +5,12 @@ from .models import Vehicule, Affectation
 
 class AffectationSerializer(serializers.ModelSerializer):
     conducteur_nom = serializers.CharField(source="conducteur.__str__", read_only=True)
+    vehicule_immatriculation = serializers.CharField(source="vehicule.immatriculation", read_only=True)
 
     class Meta:
         model = Affectation
         fields = [
-            "id", "vehicule", "conducteur", "conducteur_nom",
+            "id", "vehicule", "vehicule_immatriculation", "conducteur", "conducteur_nom",
             "date_debut", "date_fin", "motif",
             "is_active", "created_at", "updated_at",
         ]

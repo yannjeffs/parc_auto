@@ -1,0 +1,48 @@
+<h2 mat-dialog-title>{{ isEdition ? 'Modifier le document' : 'Nouveau document' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Type de document</mat-label>
+      <mat-select formControlName="type_document">
+        @for (opt of typeOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Numéro</mat-label>
+      <input matInput formControlName="numero_document" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date d'émission</mat-label>
+      <input matInput [matDatepicker]="emissionPicker" formControlName="date_emission" />
+      <mat-datepicker-toggle matSuffix [for]="emissionPicker"></mat-datepicker-toggle>
+      <mat-datepicker #emissionPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date d'expiration</mat-label>
+      <input matInput [matDatepicker]="expirationPicker" formControlName="date_expiration" />
+      <mat-datepicker-toggle matSuffix [for]="expirationPicker"></mat-datepicker-toggle>
+      <mat-datepicker #expirationPicker></mat-datepicker>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+      @if (isSaving) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        {{ isEdition ? 'Enregistrer' : 'Créer' }}
+      }
+    </button>
+  </mat-dialog-actions>
+</form>

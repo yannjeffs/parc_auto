@@ -11,6 +11,9 @@
           <mat-label>Nom d'utilisateur</mat-label>
           <input matInput formControlName="username" autocomplete="username" />
           <mat-icon matSuffix>person</mat-icon>
+          @if (form.controls.username.hasError('required') && form.controls.username.touched) {
+            <mat-error>Le nom d'utilisateur est requis.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
@@ -30,6 +33,9 @@
           >
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
+          @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+            <mat-error>Le mot de passe est requis.</mat-error>
+          }
         </mat-form-field>
 
         @if (errorMessage) {

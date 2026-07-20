@@ -13,10 +13,15 @@
     <button mat-icon-button (click)="retourListe()" aria-label="Retour">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <div>
+    <div class="header-titles">
       <h1>{{ vehicule.immatriculation }}</h1>
       <p class="subtitle">{{ vehicule.marque }} {{ vehicule.modele }} — {{ vehicule.annee }}</p>
     </div>
+    <span class="spacer"></span>
+    <button mat-stroked-button (click)="exporterPdf()" [disabled]="isExportingPdf">
+      <mat-icon>picture_as_pdf</mat-icon>
+      Exporter PDF
+    </button>
   </div>
 
   <mat-tab-group>
@@ -49,7 +54,15 @@
 
     <mat-tab label="Maintenance ({{ maintenances.length }})">
       <div class="tab-content">
-        <p class="summary">Coût total historique : <strong>{{ coutTotalMaintenance | number }} FCFA</strong></p>
+        <div class="tab-toolbar">
+          <p class="summary">Coût total historique : <strong>{{ coutTotalMaintenance | number }} FCFA</strong></p>
+          @if (authService.peutEcrire()) {
+            <button mat-stroked-button (click)="openCreateMaintenance()">
+              <mat-icon>add</mat-icon>
+              Ajouter une intervention
+            </button>
+          }
+        </div>
         <table mat-table [dataSource]="maintenances">
           <ng-container matColumnDef="date_intervention">
             <th mat-header-cell *matHeaderCellDef>Date</th>
@@ -67,6 +80,21 @@
             <th mat-header-cell *matHeaderCellDef>Coût</th>
             <td mat-cell *matCellDef="let m">{{ m.cout | number }} FCFA</td>
           </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let m">
+              @if (authService.peutEcrire()) {
+                <button mat-icon-button (click)="openEditMaintenance(m)" aria-label="Modifier">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              }
+              @if (authService.peutSupprimer()) {
+                <button mat-icon-button (click)="confirmDeleteMaintenance(m)" aria-label="Supprimer">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+            </td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="maintenanceColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: maintenanceColumns;"></tr>
         </table>
@@ -78,7 +106,15 @@
 
     <mat-tab label="Carburant ({{ pleinsCarburant.length }})">
       <div class="tab-content">
-        <p class="summary">Coût total historique : <strong>{{ coutTotalCarburant | number }} FCFA</strong></p>
+        <div class="tab-toolbar">
+          <p class="summary">Coût total historique : <strong>{{ coutTotalCarburant | number }} FCFA</strong></p>
+          @if (authService.peutEcrire()) {
+            <button mat-stroked-button (click)="openCreateCarburant()">
+              <mat-icon>add</mat-icon>
+              Ajouter un plein
+            </button>
+          }
+        </div>
         <table mat-table [dataSource]="pleinsCarburant">
           <ng-container matColumnDef="date_plein">
             <th mat-header-cell *matHeaderCellDef>Date</th>
@@ -100,6 +136,21 @@
             <th mat-header-cell *matHeaderCellDef>Station</th>
             <td mat-cell *matCellDef="let p">{{ p.station }}</td>
           </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let p">
+              @if (authService.peutEcrire()) {
+                <button mat-icon-button (click)="openEditCarburant(p)" aria-label="Modifier">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              }
+              @if (authService.peutSupprimer()) {
+                <button mat-icon-button (click)="confirmDeleteCarburant(p)" aria-label="Supprimer">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+            </td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="carburantColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: carburantColumns;"></tr>
         </table>
@@ -111,6 +162,15 @@
 
     <mat-tab label="Documents ({{ documents.length }})">
       <div class="tab-content">
+        <div class="tab-toolbar">
+          <span></span>
+          @if (authService.peutEcrire()) {
+            <button mat-stroked-button (click)="openCreateDocument()">
+              <mat-icon>add</mat-icon>
+              Ajouter un document
+            </button>
+          }
+        </div>
         <table mat-table [dataSource]="documents">
           <ng-container matColumnDef="type_document">
             <th mat-header-cell *matHeaderCellDef>Type</th>
@@ -130,6 +190,21 @@
               <span class="statut-chip" [ngClass]="d.est_valide ? 'statut-ok' : 'statut-danger'">
                 {{ d.est_valide ? 'Valide' : 'Expiré' }}
               </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let d">
+              @if (authService.peutEcrire()) {
+                <button mat-icon-button (click)="openEditDocument(d)" aria-label="Modifier">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              }
+              @if (authService.peutSupprimer()) {
+                <button mat-icon-button (click)="confirmDeleteDocument(d)" aria-label="Supprimer">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="documentColumns"></tr>

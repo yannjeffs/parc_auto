@@ -15,8 +15,11 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 import { VehiculeService } from '../core/services/vehicule.service';
 import { VehiculeListItem } from '../models/vehicule.model';
-import { VehiculeFormDialogComponent } from '../vehicule-form-dialog/vehicule-form-dialog';
+import { VehiculeFormDialogComponent } from '../vehicule-form-dialog//vehicule-form-dialog';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog';
+import { RapportService } from '../core/services/rapport.service';
+import { AuthService } from '../core/services/auth.service';
+import { NotificationService } from '../core/services/notification.service';
 
 const STATUT_LABELS: Record<string, string> = {
   en_service: 'En service',
@@ -70,11 +73,33 @@ export class VehiculeListComponent implements OnInit {
     private vehiculeService: VehiculeService,
     private router: Router,
     private dialog: MatDialog,
+    private rapportService: RapportService,
+    public authService: AuthService,
+    private notification: NotificationService,
   ) {
     this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe((term) => {
       this.currentSearch = term;
       this.pageIndex = 0;
       this.fetchVehicules(term);
+    });
+  }
+
+  isExporting = false;
+
+  exporterExcel(): void {
+    this.isExporting = true;
+    this.rapportService.exporterFlotteExcel().subscribe({
+      next: (blob) => {
+        this.isExporting = false;
+        this.rapportService.declencherTelechargement(blob, 'export_flotte.xlsx');
+        this.notification.succes('Export Excel téléchargé.');
+      },
+      error: (err) => {
+        this.isExporting = false;
+        this.notification.erreur(
+          this.notification.messageErreurApi(err, "Échec de l'export Excel."),
+        );
+      },
     });
   }
 
@@ -86,6 +111,7 @@ export class VehiculeListComponent implements OnInit {
     const dialogRef = this.dialog.open(VehiculeFormDialogComponent, { data: {} });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        this.notification.succes('Véhicule créé avec succès.');
         this.fetchVehicules(this.currentSearch);
       }
     });
@@ -93,13 +119,19 @@ export class VehiculeListComponent implements OnInit {
 
   openEditDialog(id: string, event: Event): void {
     event.stopPropagation();
-    this.vehiculeService.get(id).subscribe((vehicule) => {
-      const dialogRef = this.dialog.open(VehiculeFormDialogComponent, { data: { vehicule } });
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          this.fetchVehicules(this.currentSearch);
-        }
-      });
+    this.vehiculeService.get(id).subscribe({
+      next: (vehicule) => {
+        const dialogRef = this.dialog.open(VehiculeFormDialogComponent, { data: { vehicule } });
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.notification.succes('Véhicule modifié avec succès.');
+            this.fetchVehicules(this.currentSearch);
+          }
+        });
+      },
+      error: () => {
+        this.notification.erreur("Impossible de charger ce véhicule pour modification.");
+      },
     });
   }
 
@@ -114,8 +146,16 @@ export class VehiculeListComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this.vehiculeService.delete(id).subscribe(() => {
-          this.fetchVehicules(this.currentSearch);
+        this.vehiculeService.delete(id).subscribe({
+          next: () => {
+            this.notification.succes('Véhicule supprimé.');
+            this.fetchVehicules(this.currentSearch);
+          },
+          error: (err) => {
+            this.notification.erreur(
+              this.notification.messageErreurApi(err, 'Échec de la suppression.'),
+            );
+          },
         });
       }
     });
@@ -143,8 +183,11 @@ export class VehiculeListComponent implements OnInit {
         this.totalCount = response.count;
         this.isLoading = false;
       },
-      error: () => {
+      error: (err) => {
         this.isLoading = false;
+        this.notification.erreur(
+          this.notification.messageErreurApi(err, 'Impossible de charger la liste des véhicules.'),
+        );
       },
     });
   }

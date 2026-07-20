@@ -1,0 +1,88 @@
+<h2 mat-dialog-title>{{ isEdition ? 'Modifier le conducteur' : 'Nouveau conducteur' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Prénom</mat-label>
+      <input matInput formControlName="prenom" />
+      @if (form.controls.prenom.hasError('required')) {
+        <mat-error>Champ requis.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nom</mat-label>
+      <input matInput formControlName="nom" />
+      @if (form.controls.nom.hasError('required')) {
+        <mat-error>Champ requis.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Téléphone</mat-label>
+      <input matInput formControlName="telephone" placeholder="+237 6XX XXX XXX" />
+      @if (form.controls.telephone.hasError('required')) {
+        <mat-error>Champ requis.</mat-error>
+      } @else if (form.controls.telephone.hasError('pattern')) {
+        <mat-error>Numéro invalide.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>N° permis</mat-label>
+      <input matInput formControlName="numero_permis" />
+      @if (form.controls.numero_permis.hasError('required')) {
+        <mat-error>Champ requis.</mat-error>
+      } @else if (form.controls.numero_permis.hasError('minlength')) {
+        <mat-error>Au moins 4 caractères.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Catégorie de permis</mat-label>
+      <mat-select formControlName="categorie_permis">
+        @for (opt of categorieOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Expiration du permis</mat-label>
+      <input matInput [matDatepicker]="permisPicker" formControlName="date_expiration_permis" />
+      <mat-datepicker-toggle matSuffix [for]="permisPicker"></mat-datepicker-toggle>
+      <mat-datepicker #permisPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date d'embauche</mat-label>
+      <input matInput [matDatepicker]="embauchePicker" formControlName="date_embauche" />
+      <mat-datepicker-toggle matSuffix [for]="embauchePicker"></mat-datepicker-toggle>
+      <mat-datepicker #embauchePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Statut</mat-label>
+      <mat-select formControlName="statut">
+        @for (opt of statutOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+      @if (isSaving) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        {{ isEdition ? 'Enregistrer' : 'Créer' }}
+      }
+    </button>
+  </mat-dialog-actions>
+</form>

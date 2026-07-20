@@ -76,19 +76,22 @@ export class VehiculeFormDialogComponent {
   statutOptions = STATUT_OPTIONS;
 
   form = this.fb.group({
-    immatriculation: ['', Validators.required],
-    numero_chassis: ['', Validators.required],
+    immatriculation: ['', [Validators.required, Validators.pattern(/^[A-Z0-9 -]{4,15}$/i)]],
+    numero_chassis: ['', [Validators.required, Validators.minLength(5)]],
     marque: ['', Validators.required],
     modele: ['', Validators.required],
-    annee: [new Date().getFullYear(), [Validators.required, Validators.min(1980)]],
+    annee: [
+      new Date().getFullYear(),
+      [Validators.required, Validators.min(1980), Validators.max(new Date().getFullYear() + 1)],
+    ],
     type_vehicule: ['berline' as TypeVehicule, Validators.required],
     type_carburant: ['essence' as TypeCarburant, Validators.required],
-    nombre_places: [5, Validators.required],
+    nombre_places: [5, [Validators.required, Validators.min(1), Validators.max(9)]],
     statut: ['en_service' as StatutVehicule, Validators.required],
-    kilometrage_actuel: [0, [Validators.required, Validators.min(0)]],
+    kilometrage_actuel: [0, [Validators.required, Validators.min(0), Validators.max(2000000)]],
     site_affectation: [''],
     date_acquisition: [new Date(), Validators.required],
-    prix_acquisition: [0, [Validators.required, Validators.min(0)]],
+    prix_acquisition: [0, [Validators.required, Validators.min(1)]],
   });
 
   selectedPhotoFile: File | null = null;

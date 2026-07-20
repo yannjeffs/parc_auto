@@ -20,7 +20,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       // 401 sur une requête authentifiée (pas déjà un essai de refresh) -> on tente un refresh
       if (error.status === 401 && !isAuthRoute && authService.getRefreshToken()) {
-        return authService.refreshToken().pipe(
+        return authService.getSharedRefresh().pipe(
           switchMap(() => {
             const retriedReq = req.clone({
               setHeaders: { Authorization: `Bearer ${authService.getAccessToken()}` },

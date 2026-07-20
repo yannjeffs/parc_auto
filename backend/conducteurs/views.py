@@ -1,6 +1,7 @@
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 
+from config.permissions import IsGestionnaireOuAdmin
 from .models import Conducteur
 from .serializers import ConducteurSerializer
 
@@ -8,7 +9,7 @@ from .serializers import ConducteurSerializer
 class ConducteurViewSet(viewsets.ModelViewSet):
     queryset = Conducteur.objects.filter(is_active=True)
     serializer_class = ConducteurSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsGestionnaireOuAdmin]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ["statut", "categorie_permis"]
     search_fields = ["nom", "prenom", "numero_permis"]

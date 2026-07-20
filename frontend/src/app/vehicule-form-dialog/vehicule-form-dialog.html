@@ -33,26 +33,47 @@
     <mat-form-field appearance="outline">
       <mat-label>Immatriculation</mat-label>
       <input matInput formControlName="immatriculation" />
+      @if (form.controls.immatriculation.hasError('required')) {
+        <mat-error>Champ requis.</mat-error>
+      } @else if (form.controls.immatriculation.hasError('pattern')) {
+        <mat-error>Format invalide (lettres, chiffres, espaces, 4 à 15 caractères).</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>N° châssis</mat-label>
       <input matInput formControlName="numero_chassis" />
+      @if (form.controls.numero_chassis.hasError('required')) {
+        <mat-error>Champ requis.</mat-error>
+      } @else if (form.controls.numero_chassis.hasError('minlength')) {
+        <mat-error>Au moins 5 caractères.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Marque</mat-label>
       <input matInput formControlName="marque" />
+      @if (form.controls.marque.hasError('required')) {
+        <mat-error>Champ requis.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Modèle</mat-label>
       <input matInput formControlName="modele" />
+      @if (form.controls.modele.hasError('required')) {
+        <mat-error>Champ requis.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Année</mat-label>
       <input matInput type="number" formControlName="annee" />
+      @if (form.controls.annee.hasError('required')) {
+        <mat-error>Champ requis.</mat-error>
+      } @else if (form.controls.annee.hasError('min') || form.controls.annee.hasError('max')) {
+        <mat-error>Année invalide.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -76,6 +97,9 @@
     <mat-form-field appearance="outline">
       <mat-label>Nombre de places</mat-label>
       <input matInput type="number" formControlName="nombre_places" />
+      @if (form.controls.nombre_places.hasError('min') || form.controls.nombre_places.hasError('max')) {
+        <mat-error>Entre 1 et 9 places.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -90,6 +114,11 @@
     <mat-form-field appearance="outline">
       <mat-label>Kilométrage actuel</mat-label>
       <input matInput type="number" formControlName="kilometrage_actuel" />
+      @if (form.controls.kilometrage_actuel.hasError('min')) {
+        <mat-error>Ne peut pas être négatif.</mat-error>
+      } @else if (form.controls.kilometrage_actuel.hasError('max')) {
+        <mat-error>Valeur trop élevée, vérifie la saisie.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -107,6 +136,9 @@
     <mat-form-field appearance="outline">
       <mat-label>Prix d'acquisition (FCFA)</mat-label>
       <input matInput type="number" formControlName="prix_acquisition" />
+      @if (form.controls.prix_acquisition.hasError('min')) {
+        <mat-error>Doit être supérieur à 0.</mat-error>
+      }
     </mat-form-field>
   </mat-dialog-content>
 

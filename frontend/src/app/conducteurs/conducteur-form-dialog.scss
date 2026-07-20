@@ -1,0 +1,25 @@
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 1rem;
+  min-width: 480px;
+  max-width: 560px;
+}
+
+.error-message {
+  color: #b3261e;
+  font-size: 0.875rem;
+  margin: 0 1.5rem 0.5rem;
+}
+
+mat-dialog-actions button[type='submit'] {
+  min-width: 90px;
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    min-width: 0;
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>{{ isEdition ? 'Modifier le plein' : 'Nouveau plein' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Date et heure</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="date_plein" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Conducteur</mat-label>
+      <mat-select formControlName="conducteur">
+        <mat-option [value]="null">— Non renseigné —</mat-option>
+        @for (c of conducteurs; track c.id) {
+          <mat-option [value]="c.id">{{ c.prenom }} {{ c.nom }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Litres</mat-label>
+      <input matInput type="number" step="0.1" formControlName="litres" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Coût total (FCFA)</mat-label>
+      <input matInput type="number" formControlName="cout_total" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Kilométrage au plein</mat-label>
+      <input matInput type="number" formControlName="kilometrage_au_plein" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Station</mat-label>
+      <input matInput formControlName="station" placeholder="Total, Ola Energy..." />
+    </mat-form-field>
+  </mat-dialog-content>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+      @if (isSaving) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        {{ isEdition ? 'Enregistrer' : 'Créer' }}
+      }
+    </button>
+  </mat-dialog-actions>
+</form>

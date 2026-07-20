@@ -37,3 +37,19 @@ body {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+// À ajouter dans frontend/src/styles.scss (styles globaux, pas de encapsulation
+// component car les snackbars Material sont injectés hors de l'arbre du composant)
+
+.notification-succes {
+  --mdc-snackbar-container-color: #1e7a34;
+  --mdc-snackbar-supporting-text-color: white;
+  --mat-snack-bar-button-color: white;
+}
+
+.notification-erreur {
+  --mdc-snackbar-container-color: #b3261e;
+  --mdc-snackbar-supporting-text-color: white;
+  --mat-snack-bar-button-color: white;
+}
