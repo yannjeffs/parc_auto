@@ -10,10 +10,16 @@
 .sidenav-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   padding: 1.25rem 1rem;
   font-size: 1.1rem;
   font-weight: 600;
+}
+
+.brand-mark {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
 }
 
 .active-link {

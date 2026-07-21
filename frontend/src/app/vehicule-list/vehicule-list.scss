@@ -21,8 +21,11 @@
   width: 320px;
 }
 
-.table-container {
+.content-container {
   position: relative;
+}
+
+.table-container {
   background: white;
   border-radius: 8px;
   overflow: hidden;
@@ -124,4 +127,80 @@
   .search-field {
     width: 100%;
   }
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.vehicule-card {
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.card-photo {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  background: #eceff1;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.card-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #90a4ae;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.card-statut-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.card-immatriculation {
+  margin: 0.75rem 0 0.15rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.card-marque-modele {
+  margin: 0 0 0.15rem;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 0.9rem;
+}
+
+.card-kilometrage {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 0.85rem;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 0.5rem 0.5rem;
 }

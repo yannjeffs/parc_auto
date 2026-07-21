@@ -41,4 +41,5 @@ export interface VehiculeListItem {
   modele: string;
   statut: StatutVehicule;
   kilometrage_actuel: number;
+  photo: string | null;
 }

@@ -43,5 +43,5 @@ class VehiculeListSerializer(serializers.ModelSerializer):
         model = Vehicule
         fields = [
             "id", "immatriculation", "marque", "modele",
-            "statut", "kilometrage_actuel",
+            "statut", "kilometrage_actuel", "photo",
         ]

@@ -10,6 +10,18 @@
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
+    <mat-button-toggle-group
+      [value]="viewMode"
+      (change)="onViewModeChange($event.value)"
+      aria-label="Mode d'affichage"
+    >
+      <mat-button-toggle value="table" aria-label="Vue en liste">
+        <mat-icon>view_list</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle value="grid" aria-label="Vue en cartes">
+        <mat-icon>grid_view</mat-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
     @if (authService.peutEcrire()) {
       <button mat-flat-button color="primary" (click)="openCreateDialog()">
         <mat-icon>add</mat-icon>
@@ -23,72 +35,116 @@
   </div>
 </div>
 
-<div class="table-container">
+<div class="content-container">
   @if (isLoading) {
     <div class="loading-overlay">
       <mat-spinner diameter="40"></mat-spinner>
     </div>
   }
 
-  <table mat-table [dataSource]="vehicules" class="vehicules-table">
-    <ng-container matColumnDef="immatriculation">
-      <th mat-header-cell *matHeaderCellDef>Immatriculation</th>
-      <td mat-cell *matCellDef="let v">{{ v.immatriculation }}</td>
-    </ng-container>
+  @if (viewMode === 'table') {
+    <div class="table-container">
+      <table mat-table [dataSource]="vehicules" class="vehicules-table">
+        <ng-container matColumnDef="immatriculation">
+          <th mat-header-cell *matHeaderCellDef>Immatriculation</th>
+          <td mat-cell *matCellDef="let v">{{ v.immatriculation }}</td>
+        </ng-container>
 
-    <ng-container matColumnDef="marque_modele">
-      <th mat-header-cell *matHeaderCellDef>Véhicule</th>
-      <td mat-cell *matCellDef="let v">
-        <div class="vehicule-cell">
-          <div class="vehicule-avatar">
-            <mat-icon>directions_car</mat-icon>
+        <ng-container matColumnDef="marque_modele">
+          <th mat-header-cell *matHeaderCellDef>Véhicule</th>
+          <td mat-cell *matCellDef="let v">
+            <div class="vehicule-cell">
+              <div class="vehicule-avatar">
+                <mat-icon>directions_car</mat-icon>
+              </div>
+              <span>{{ v.marque }} {{ v.modele }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="statut">
+          <th mat-header-cell *matHeaderCellDef>Statut</th>
+          <td mat-cell *matCellDef="let v">
+            <span class="statut-chip" [ngClass]="statutColors[v.statut]">
+              {{ statutLabels[v.statut] }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="kilometrage_actuel">
+          <th mat-header-cell *matHeaderCellDef>Kilométrage</th>
+          <td mat-cell *matCellDef="let v">{{ v.kilometrage_actuel | number }} km</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let v">
+            @if (authService.peutEcrire()) {
+              <button mat-icon-button (click)="openEditDialog(v.id, $event)" aria-label="Modifier">
+                <mat-icon>edit</mat-icon>
+              </button>
+            }
+            @if (authService.peutSupprimer()) {
+              <button mat-icon-button (click)="confirmDelete(v.id, v.immatriculation, $event)" aria-label="Supprimer">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns;"
+          class="clickable-row"
+          (click)="voirDetail(row.id)"
+        ></tr>
+      </table>
+
+      @if (!isLoading && vehicules.length === 0) {
+        <p class="empty-state">Aucun véhicule trouvé.</p>
+      }
+    </div>
+  } @else {
+    <div class="cards-grid">
+      @for (v of vehicules; track v.id) {
+        <mat-card class="vehicule-card" (click)="voirDetail(v.id)">
+          <div class="card-photo">
+            @if (v.photo) {
+              <img [src]="v.photo" alt="Photo de {{ v.immatriculation }}" />
+            } @else {
+              <div class="card-photo-placeholder">
+                <mat-icon>directions_car</mat-icon>
+              </div>
+            }
+            <span class="statut-chip card-statut-badge" [ngClass]="statutColors[v.statut]">
+              {{ statutLabels[v.statut] }}
+            </span>
           </div>
-          <span>{{ v.marque }} {{ v.modele }}</span>
-        </div>
-      </td>
-    </ng-container>
+          <mat-card-content>
+            <p class="card-immatriculation">{{ v.immatriculation }}</p>
+            <p class="card-marque-modele">{{ v.marque }} {{ v.modele }}</p>
+            <p class="card-kilometrage">{{ v.kilometrage_actuel | number }} km</p>
+          </mat-card-content>
+          <mat-card-actions class="card-actions">
+            @if (authService.peutEcrire()) {
+              <button mat-icon-button (click)="openEditDialog(v.id, $event)" aria-label="Modifier">
+                <mat-icon>edit</mat-icon>
+              </button>
+            }
+            @if (authService.peutSupprimer()) {
+              <button mat-icon-button (click)="confirmDelete(v.id, v.immatriculation, $event)" aria-label="Supprimer">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
 
-    <ng-container matColumnDef="statut">
-      <th mat-header-cell *matHeaderCellDef>Statut</th>
-      <td mat-cell *matCellDef="let v">
-        <span class="statut-chip" [ngClass]="statutColors[v.statut]">
-          {{ statutLabels[v.statut] }}
-        </span>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="kilometrage_actuel">
-      <th mat-header-cell *matHeaderCellDef>Kilométrage</th>
-      <td mat-cell *matCellDef="let v">{{ v.kilometrage_actuel | number }} km</td>
-    </ng-container>
-
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let v">
-        @if (authService.peutEcrire()) {
-          <button mat-icon-button (click)="openEditDialog(v.id, $event)" aria-label="Modifier">
-            <mat-icon>edit</mat-icon>
-          </button>
-        }
-        @if (authService.peutSupprimer()) {
-          <button mat-icon-button (click)="confirmDelete(v.id, v.immatriculation, $event)" aria-label="Supprimer">
-            <mat-icon>delete</mat-icon>
-          </button>
-        }
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr
-      mat-row
-      *matRowDef="let row; columns: displayedColumns;"
-      class="clickable-row"
-      (click)="voirDetail(row.id)"
-    ></tr>
-  </table>
-
-  @if (!isLoading && vehicules.length === 0) {
-    <p class="empty-state">Aucun véhicule trouvé.</p>
+    @if (!isLoading && vehicules.length === 0) {
+      <p class="empty-state">Aucun véhicule trouvé.</p>
+    }
   }
 
   <mat-paginator

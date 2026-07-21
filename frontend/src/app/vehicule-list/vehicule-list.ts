@@ -9,13 +9,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 import { VehiculeService } from '../core/services/vehicule.service';
 import { VehiculeListItem } from '../models/vehicule.model';
-import { VehiculeFormDialogComponent } from '../vehicule-form-dialog//vehicule-form-dialog';
+import { VehiculeFormDialogComponent } from '../vehicule-form-dialog/vehicule-form-dialog';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog';
 import { RapportService } from '../core/services/rapport.service';
 import { AuthService } from '../core/services/auth.service';
@@ -50,6 +52,8 @@ const STATUT_COLORS: Record<string, string> = {
     MatChipsModule,
     MatProgressSpinnerModule,
     MatButtonModule,
+    MatButtonToggleModule,
+    MatCardModule,
     MatMenuModule,
     MatDialogModule,
   ],
@@ -57,6 +61,8 @@ const STATUT_COLORS: Record<string, string> = {
   styleUrl: './vehicule-list.scss',
 })
 export class VehiculeListComponent implements OnInit {
+  private static readonly VIEW_MODE_KEY = 'parc_auto_vehicules_vue';
+
   displayedColumns = ['immatriculation', 'marque_modele', 'statut', 'kilometrage_actuel', 'actions'];
   vehicules: VehiculeListItem[] = [];
   totalCount = 0;
@@ -64,10 +70,17 @@ export class VehiculeListComponent implements OnInit {
   pageIndex = 0;
   isLoading = false;
   currentSearch = '';
+  viewMode: 'table' | 'grid' =
+    (localStorage.getItem(VehiculeListComponent.VIEW_MODE_KEY) as 'table' | 'grid') || 'table';
 
   private searchSubject = new Subject<string>();
   statutLabels = STATUT_LABELS;
   statutColors = STATUT_COLORS;
+
+  onViewModeChange(mode: 'table' | 'grid'): void {
+    this.viewMode = mode;
+    localStorage.setItem(VehiculeListComponent.VIEW_MODE_KEY, mode);
+  }
 
   constructor(
     private vehiculeService: VehiculeService,

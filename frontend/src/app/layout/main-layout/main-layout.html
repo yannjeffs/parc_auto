@@ -6,8 +6,12 @@
     class="app-sidenav"
   >
     <div class="sidenav-header">
-      <mat-icon>directions_car</mat-icon>
-      <span>Parc Auto</span>
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+        <rect x="6" y="26" width="8" height="14" rx="3" fill="#80DEEA"/>
+        <rect x="18" y="18" width="8" height="22" rx="3" fill="#00ACC1"/>
+        <rect x="30" y="10" width="8" height="30" rx="3" fill="#FB8C00"/>
+      </svg>
+      <span>Convoy</span>
     </div>
     <mat-nav-list>
       @for (item of navItems; track item.route) {
@@ -31,7 +35,7 @@
           <mat-icon>menu</mat-icon>
         </button>
       }
-      <span class="toolbar-title">{{ isMobile ? 'Parc Auto' : 'Gestion de parc automobile' }}</span>
+      <span class="toolbar-title">{{ isMobile ? 'Convoy' : 'Convoy — Gestion de flotte automobile' }}</span>
       <span class="spacer"></span>
       @if (roleLabel && !isMobile) {
         <span class="role-badge">{{ roleLabel }}</span>
