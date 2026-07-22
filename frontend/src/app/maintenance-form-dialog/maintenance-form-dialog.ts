@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -11,10 +11,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
 import { MaintenanceService } from '../core/services/maintenance.service';
+import { VehiculeService } from '../core/services/vehicule.service';
 import { Maintenance, TypeMaintenance, StatutMaintenance } from '../models/maintenance.model';
+import { VehiculeListItem } from '../models/vehicule.model';
 
 export interface MaintenanceFormData {
-  vehiculeId: string;
+  /** Fourni depuis la fiche véhicule : le champ véhicule est alors verrouillé.
+   *  Omis depuis la page globale Maintenance : un sélecteur véhicule apparaît. */
+  vehiculeId?: string;
   maintenance?: Maintenance;
 }
 
@@ -48,20 +52,25 @@ const STATUT_OPTIONS: { value: StatutMaintenance; label: string }[] = [
   templateUrl: './maintenance-form-dialog.html',
   styleUrl: './maintenance-form-dialog.scss',
 })
-export class MaintenanceFormDialogComponent {
+export class MaintenanceFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private maintenanceService = inject(MaintenanceService);
+  private vehiculeService = inject(VehiculeService);
   private dialogRef = inject(MatDialogRef<MaintenanceFormDialogComponent>);
   data: MaintenanceFormData = inject(MAT_DIALOG_DATA);
 
   isEdition = !!this.data?.maintenance;
+  /** true si on doit afficher le sélecteur véhicule (page globale, pas de vehiculeId imposé) */
+  vehiculeLibre = !this.data?.vehiculeId && !this.data?.maintenance;
   isSaving = false;
   errorMessage: string | null = null;
+  vehicules: VehiculeListItem[] = [];
 
   typeOptions = TYPE_OPTIONS;
   statutOptions = STATUT_OPTIONS;
 
   form = this.fb.group({
+    vehicule: [this.data?.vehiculeId || '', Validators.required],
     type_maintenance: ['preventive' as TypeMaintenance, Validators.required],
     statut: ['terminee' as StatutMaintenance, Validators.required],
     description: ['', Validators.required],
@@ -77,6 +86,7 @@ export class MaintenanceFormDialogComponent {
     if (this.data?.maintenance) {
       const m = this.data.maintenance;
       this.form.patchValue({
+        vehicule: m.vehicule,
         type_maintenance: m.type_maintenance,
         statut: m.statut,
         description: m.description,
@@ -86,6 +96,15 @@ export class MaintenanceFormDialogComponent {
         prestataire: m.prestataire,
         prochaine_echeance_date: m.prochaine_echeance_date ? new Date(m.prochaine_echeance_date) : null,
         prochaine_echeance_km: m.prochaine_echeance_km,
+      });
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.vehiculeLibre) {
+      this.vehiculeService.list({ page_size: 200 }).subscribe({
+        next: (response) => (this.vehicules = response.results),
+        error: () => undefined,
       });
     }
   }
@@ -102,7 +121,6 @@ export class MaintenanceFormDialogComponent {
     const raw = this.form.value;
     const payload: Partial<Maintenance> = {
       ...raw,
-      vehicule: this.data.vehiculeId,
       date_intervention: (raw.date_intervention as Date).toISOString().split('T')[0],
       cout: String(raw.cout),
       prochaine_echeance_date: raw.prochaine_echeance_date

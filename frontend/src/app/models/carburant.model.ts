@@ -1,6 +1,7 @@
 export interface PleinCarburant {
   id: string;
   vehicule: string;
+  vehicule_immatriculation: string;
   conducteur: string | null;
   date_plein: string;
   litres: string;

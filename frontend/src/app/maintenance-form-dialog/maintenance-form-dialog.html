@@ -2,6 +2,20 @@
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-dialog-content class="form-grid">
+    @if (vehiculeLibre) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Véhicule</mat-label>
+        <mat-select formControlName="vehicule">
+          @for (v of vehicules; track v.id) {
+            <mat-option [value]="v.id">{{ v.immatriculation }} — {{ v.marque }} {{ v.modele }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.vehicule.hasError('required') && form.controls.vehicule.touched) {
+          <mat-error>Sélectionne un véhicule.</mat-error>
+        }
+      </mat-form-field>
+    }
+
     <mat-form-field appearance="outline">
       <mat-label>Type</mat-label>
       <mat-select formControlName="type_maintenance">

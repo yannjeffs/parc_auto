@@ -12,11 +12,13 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 
 import { CarburantService } from '../core/services/carburant.service';
 import { ConducteurService } from '../core/services/conducteur.service';
+import { VehiculeService } from '../core/services/vehicule.service';
 import { PleinCarburant } from '../models/carburant.model';
 import { Conducteur } from '../models/conducteur.model';
+import { VehiculeListItem } from '../models/vehicule.model';
 
 export interface CarburantFormData {
-  vehiculeId: string;
+  vehiculeId?: string;
   plein?: PleinCarburant;
 }
 
@@ -42,15 +44,19 @@ export class CarburantFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private carburantService = inject(CarburantService);
   private conducteurService = inject(ConducteurService);
+  private vehiculeService = inject(VehiculeService);
   private dialogRef = inject(MatDialogRef<CarburantFormDialogComponent>);
   data: CarburantFormData = inject(MAT_DIALOG_DATA);
 
   isEdition = !!this.data?.plein;
+  vehiculeLibre = !this.data?.vehiculeId && !this.data?.plein;
   isSaving = false;
   errorMessage: string | null = null;
   conducteurs: Conducteur[] = [];
+  vehicules: VehiculeListItem[] = [];
 
   form = this.fb.group({
+    vehicule: [this.data?.vehiculeId || '', Validators.required],
     date_plein: [new Date(), Validators.required],
     litres: [0, [Validators.required, Validators.min(0.1)]],
     cout_total: [0, [Validators.required, Validators.min(0)]],
@@ -63,6 +69,7 @@ export class CarburantFormDialogComponent implements OnInit {
     if (this.data?.plein) {
       const p = this.data.plein;
       this.form.patchValue({
+        vehicule: p.vehicule,
         date_plein: new Date(p.date_plein),
         litres: Number(p.litres),
         cout_total: Number(p.cout_total),
@@ -74,11 +81,16 @@ export class CarburantFormDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Liste des conducteurs pour le select (limité à 100, suffisant pour ce contexte)
     this.conducteurService.list({ page_size: 100 }).subscribe({
       next: (response) => (this.conducteurs = response.results),
       error: () => undefined,
     });
+    if (this.vehiculeLibre) {
+      this.vehiculeService.list({ page_size: 200 }).subscribe({
+        next: (response) => (this.vehicules = response.results),
+        error: () => undefined,
+      });
+    }
   }
 
   onSubmit(): void {
@@ -93,7 +105,6 @@ export class CarburantFormDialogComponent implements OnInit {
     const raw = this.form.value;
     const payload: Partial<PleinCarburant> = {
       ...raw,
-      vehicule: this.data.vehiculeId,
       date_plein: (raw.date_plein as Date).toISOString(),
       litres: String(raw.litres),
       cout_total: String(raw.cout_total),

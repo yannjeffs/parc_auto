@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -11,10 +11,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
 import { DocumentService } from '../core/services/document.service';
+import { VehiculeService } from '../core/services/vehicule.service';
 import { DocumentVehicule, TypeDocument } from '../models/document.model';
+import { VehiculeListItem } from '../models/vehicule.model';
 
 export interface DocumentFormData {
-  vehiculeId: string;
+  vehiculeId?: string;
   document?: DocumentVehicule;
 }
 
@@ -44,19 +46,23 @@ const TYPE_OPTIONS: { value: TypeDocument; label: string }[] = [
   templateUrl: './document-form-dialog.html',
   styleUrl: './document-form-dialog.scss',
 })
-export class DocumentFormDialogComponent {
+export class DocumentFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private documentService = inject(DocumentService);
+  private vehiculeService = inject(VehiculeService);
   private dialogRef = inject(MatDialogRef<DocumentFormDialogComponent>);
   data: DocumentFormData = inject(MAT_DIALOG_DATA);
 
   isEdition = !!this.data?.document;
+  vehiculeLibre = !this.data?.vehiculeId && !this.data?.document;
   isSaving = false;
   errorMessage: string | null = null;
+  vehicules: VehiculeListItem[] = [];
 
   typeOptions = TYPE_OPTIONS;
 
   form = this.fb.group({
+    vehicule: [this.data?.vehiculeId || '', Validators.required],
     type_document: ['assurance' as TypeDocument, Validators.required],
     numero_document: [''],
     date_emission: [new Date(), Validators.required],
@@ -67,10 +73,20 @@ export class DocumentFormDialogComponent {
     if (this.data?.document) {
       const d = this.data.document;
       this.form.patchValue({
+        vehicule: d.vehicule,
         type_document: d.type_document,
         numero_document: d.numero_document,
         date_emission: new Date(d.date_emission),
         date_expiration: d.date_expiration ? new Date(d.date_expiration) : null,
+      });
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.vehiculeLibre) {
+      this.vehiculeService.list({ page_size: 200 }).subscribe({
+        next: (response) => (this.vehicules = response.results),
+        error: () => undefined,
       });
     }
   }
@@ -87,7 +103,6 @@ export class DocumentFormDialogComponent {
     const raw = this.form.value;
     const payload: Partial<DocumentVehicule> = {
       ...raw,
-      vehicule: this.data.vehiculeId,
       date_emission: (raw.date_emission as Date).toISOString().split('T')[0],
       date_expiration: raw.date_expiration
         ? (raw.date_expiration as Date).toISOString().split('T')[0]

@@ -1,0 +1,92 @@
+<div class="page-header">
+  <h1>Documents</h1>
+  <div class="header-actions">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Filtrer par véhicule</mat-label>
+      <mat-select [(ngModel)]="vehiculeFiltre" (selectionChange)="onVehiculeFiltreChange()">
+        <mat-option [value]="null">Tous les véhicules</mat-option>
+        @for (v of vehicules; track v.id) {
+          <mat-option [value]="v.id">{{ v.immatriculation }} — {{ v.marque }} {{ v.modele }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    @if (authService.peutEcrire()) {
+      <button mat-flat-button color="primary" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        Ajouter un document
+      </button>
+    }
+  </div>
+</div>
+
+<div class="table-container">
+  @if (isLoading) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <table mat-table [dataSource]="documents">
+    <ng-container matColumnDef="vehicule">
+      <th mat-header-cell *matHeaderCellDef>Véhicule</th>
+      <td mat-cell *matCellDef="let d">
+        <a [routerLink]="['/vehicules', d.vehicule]">{{ d.vehicule_immatriculation }}</a>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="type_document">
+      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <td mat-cell *matCellDef="let d">{{ d.type_document }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="numero_document">
+      <th mat-header-cell *matHeaderCellDef>Numéro</th>
+      <td mat-cell *matCellDef="let d">{{ d.numero_document || '—' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="date_expiration">
+      <th mat-header-cell *matHeaderCellDef>Expiration</th>
+      <td mat-cell *matCellDef="let d">{{ d.date_expiration | date:'longDate' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="est_valide">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let d">
+        <span class="statut-chip" [ngClass]="d.est_valide ? 'statut-ok' : 'statut-danger'">
+          {{ d.est_valide ? 'Valide' : 'Expiré' }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let d">
+        @if (authService.peutEcrire()) {
+          <button mat-icon-button (click)="openEditDialog(d)" aria-label="Modifier">
+            <mat-icon>edit</mat-icon>
+          </button>
+        }
+        @if (authService.peutSupprimer()) {
+          <button mat-icon-button (click)="confirmDelete(d)" aria-label="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  @if (!isLoading && documents.length === 0) {
+    <p class="empty-state">Aucun document trouvé.</p>
+  }
+
+  <mat-paginator
+    [length]="totalCount"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="[10, 20, 50]"
+    (page)="onPageChange($event)"
+  ></mat-paginator>
+</div>

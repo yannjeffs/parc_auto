@@ -1,13 +1,9 @@
-export type TypeDocument =
-  | 'assurance'
-  | 'visite_technique'
-  | 'carte_grise'
-  | 'vignette'
-  | 'autre';
+export type TypeDocument = 'assurance' | 'visite_technique' | 'carte_grise' | 'vignette' | 'autre';
 
 export interface DocumentVehicule {
   id: string;
   vehicule: string;
+  vehicule_immatriculation: string;
   type_document: TypeDocument;
   numero_document: string;
   date_emission: string;
