@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -9,9 +9,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { provideNativeDateAdapter } from '@angular/material/core';
-
+import { AuthService } from '../core/services/auth.service';
 import { ConducteurService } from '../core/services/conducteur.service';
-import { Conducteur, CategoriePermis, StatutConducteur } from '../models/conducteur.model';
+import { UtilisateurService } from '../core/services/utilisateur.service';
+import { CategoriePermis, Conducteur, StatutConducteur } from '../models/conducteur.model';
+import { Utilisateur } from '../models/utilisateur.model';
+
+
 
 export interface ConducteurFormData {
   conducteur?: Conducteur;
@@ -50,15 +54,18 @@ const STATUT_OPTIONS: { value: StatutConducteur; label: string }[] = [
   templateUrl: './conducteur-form-dialog.html',
   styleUrl: './conducteur-form-dialog.scss',
 })
-export class ConducteurFormDialogComponent {
+export class ConducteurFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private conducteurService = inject(ConducteurService);
+  private utilisateurService = inject(UtilisateurService);
+  authService = inject(AuthService);
   private dialogRef = inject(MatDialogRef<ConducteurFormDialogComponent>);
   data: ConducteurFormData = inject(MAT_DIALOG_DATA);
 
   isEdition = !!this.data?.conducteur;
   isSaving = false;
   errorMessage: string | null = null;
+  utilisateurs: Utilisateur[] = [];
 
   categorieOptions = CATEGORIE_OPTIONS;
   statutOptions = STATUT_OPTIONS;
@@ -72,6 +79,7 @@ export class ConducteurFormDialogComponent {
     date_expiration_permis: [new Date(), Validators.required],
     date_embauche: [new Date(), Validators.required],
     statut: ['disponible' as StatutConducteur, Validators.required],
+    utilisateur: [null as number | null],
   });
 
   constructor() {
@@ -86,6 +94,18 @@ export class ConducteurFormDialogComponent {
         date_expiration_permis: new Date(c.date_expiration_permis),
         date_embauche: new Date(c.date_embauche),
         statut: c.statut,
+        utilisateur: c.utilisateur,
+      });
+    }
+  }
+
+  ngOnInit(): void {
+    // Seul un administrateur peut voir/lier des comptes de connexion
+    // (l'endpoint /api/utilisateurs/ est réservé aux admins côté API).
+    if (this.authService.isAdmin()) {
+      this.utilisateurService.list().subscribe({
+        next: (response) => (this.utilisateurs = response.results),
+        error: () => undefined,
       });
     }
   }

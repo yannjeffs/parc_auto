@@ -17,6 +17,7 @@ urlpatterns = [
     path("api/", include("maintenance.urls")),
     path("api/", include("carburant.urls")),
     path("api/", include("documents.urls")),
+    path("api/", include("comptes.urls")),
     path("api/rapports/", include("rapports.urls")),
 
     # Authentification JWT

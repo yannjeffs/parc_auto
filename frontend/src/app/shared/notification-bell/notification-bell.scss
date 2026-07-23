@@ -1,0 +1,37 @@
+
+::ng-deep .notification-menu {
+  min-width: 320px;
+  max-width: 380px;
+}
+
+.notification-header {
+  padding: 0.75rem 1rem 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.notification-loading {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.notification-empty {
+  padding: 1.25rem 1rem;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.icon-danger {
+  color: #b3261e;
+}
+
+.icon-warn {
+  color: #a86400;
+}
+
+.notification-footer-link {
+  font-size: 0.85rem;
+  color: #1976d2;
+}

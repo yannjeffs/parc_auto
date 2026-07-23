@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>{{ isEdition ? 'Modifier le compte' : 'Nouveau compte' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Nom d'utilisateur</mat-label>
+      <input matInput formControlName="username" autocomplete="off" />
+      @if (form.controls.username.hasError('required') && form.controls.username.touched) {
+        <mat-error>Champ requis.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email (optionnel)</mat-label>
+      <input matInput type="email" formControlName="email" autocomplete="off" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ isEdition ? 'Nouveau mot de passe (optionnel)' : 'Mot de passe' }}</mat-label>
+      <input matInput type="password" formControlName="password" autocomplete="new-password" />
+      @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+        <mat-error>Champ requis.</mat-error>
+      } @else if (form.controls.password.hasError('minlength')) {
+        <mat-error>Au moins 8 caractères.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Rôle</mat-label>
+      <mat-select formControlName="role_saisi">
+        @for (opt of roleOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (isEdition) {
+      <div class="full-width toggle-actif">
+        <mat-slide-toggle formControlName="is_active">
+          Compte actif
+        </mat-slide-toggle>
+      </div>
+    }
+  </mat-dialog-content>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+      @if (isSaving) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        {{ isEdition ? 'Enregistrer' : 'Créer' }}
+      }
+    </button>
+  </mat-dialog-actions>
+</form>

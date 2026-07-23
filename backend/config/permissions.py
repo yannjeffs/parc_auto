@@ -47,3 +47,18 @@ class IsGestionnaireOuAdmin(BasePermission):
 
         # POST / PUT / PATCH
         return "Admin" in groupes or "Gestionnaire" in groupes
+
+
+class IsAdminSeul(BasePermission):
+    """
+    Réservée aux vues sensibles où même la lecture doit être limitée aux
+    administrateurs — typiquement la gestion des comptes utilisateurs.
+    """
+
+    message = "Réservé aux administrateurs."
+
+    def has_permission(self, request, view):
+        user = request.user
+        if not user or not user.is_authenticated:
+            return False
+        return user.is_superuser or _groupes(user).__contains__("Admin")

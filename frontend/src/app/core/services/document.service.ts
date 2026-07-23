@@ -11,12 +11,13 @@ export class DocumentService {
 
   constructor(private http: HttpClient) {}
 
-  list(filters?: { vehicule?: string; type_document?: string; page?: number }):
+  list(filters?: { vehicule?: string; type_document?: string; page?: number, page_size?: number }):
     Observable<PaginatedResponse<DocumentVehicule>> {
     let params = new HttpParams();
     if (filters?.vehicule) params = params.set('vehicule', filters.vehicule);
     if (filters?.type_document) params = params.set('type_document', filters.type_document);
     if (filters?.page) params = params.set('page', filters.page);
+    if (filters?.page_size) params = params.set('page_size', filters.page_size);
 
     return this.http.get<PaginatedResponse<DocumentVehicule>>(this.baseUrl, { params });
   }

@@ -19,6 +19,7 @@ import { DocumentVehicule } from '../models/document.model';
 import { VehiculeListItem } from '../models/vehicule.model';
 import { DocumentFormDialogComponent } from '../document-form-dialog/document-form-dialog';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog';
+import { MatTooltip } from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-document-list',
@@ -35,7 +36,8 @@ import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog'
     MatSelectModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-  ],
+    MatTooltip
+],
   templateUrl: './document-list.html',
   styleUrl: './document-list.scss',
 })

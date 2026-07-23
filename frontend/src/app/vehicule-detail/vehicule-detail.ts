@@ -28,6 +28,7 @@ import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog'
 import { RapportService } from '../core/services/rapport.service';
 import { AuthService } from '../core/services/auth.service';
 import { NotificationService } from '../core/services/notification.service';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-vehicule-detail',
@@ -43,6 +44,7 @@ import { NotificationService } from '../core/services/notification.service';
     MatTableModule,
     MatProgressSpinnerModule,
     MatDialogModule,
+    MatTooltip
   ],
   templateUrl: './vehicule-detail.html',
   styleUrl: './vehicule-detail.scss',

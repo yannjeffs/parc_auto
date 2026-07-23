@@ -62,12 +62,12 @@
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let d">
         @if (authService.peutEcrire()) {
-          <button mat-icon-button (click)="openEditDialog(d)" aria-label="Modifier">
+          <button mat-icon-button (click)="openEditDialog(d)" matTooltip="Modifier le document" aria-label="Modifier">
             <mat-icon>edit</mat-icon>
           </button>
         }
         @if (authService.peutSupprimer()) {
-          <button mat-icon-button (click)="confirmDelete(d)" aria-label="Supprimer">
+          <button mat-icon-button (click)="confirmDelete(d)" matTooltip="Supprimer le document" aria-label="Supprimer">
             <mat-icon>delete</mat-icon>
           </button>
         }

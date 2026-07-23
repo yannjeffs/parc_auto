@@ -120,7 +120,7 @@ export class DocumentFormDialogComponent implements OnInit {
       },
       error: () => {
         this.isSaving = false;
-        this.errorMessage = 'Une erreur est survenue lors de l\'enregistrement.';
+        this.errorMessage = "Une erreur est survenue lors de l'enregistrement.";
       },
     });
   }

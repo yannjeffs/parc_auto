@@ -69,6 +69,19 @@
         }
       </mat-select>
     </mat-form-field>
+
+    @if (authService.isAdmin()) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Compte de connexion (optionnel)</mat-label>
+        <mat-select formControlName="utilisateur">
+          <mat-option [value]="null">— Aucun —</mat-option>
+          @for (u of utilisateurs; track u.id) {
+            <mat-option [value]="u.id">{{ u.username }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Permet à ce conducteur de se connecter lui-même à l'application.</mat-hint>
+      </mat-form-field>
+    }
   </mat-dialog-content>
 
   @if (errorMessage) {

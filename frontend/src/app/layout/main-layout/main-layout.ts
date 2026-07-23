@@ -10,11 +10,13 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationBellComponent } from '../../shared/notification-bell/notification-bell';
 
 interface NavItem {
   label: string;
   icon: string;
   route: string;
+  adminOnly?: boolean;
 }
 
 @Component({
@@ -30,6 +32,7 @@ interface NavItem {
     MatListModule,
     MatIconModule,
     MatButtonModule,
+    NotificationBellComponent,
   ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss',
@@ -48,6 +51,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     { label: 'Maintenance', icon: 'build', route: '/maintenance' },
     { label: 'Carburant', icon: 'local_gas_station', route: '/carburant' },
     { label: 'Documents', icon: 'description', route: '/documents' },
+    { label: 'Comptes', icon: 'admin_panel_settings', route: '/utilisateurs', adminOnly: true },
   ];
 
   // Propriété simple mise à jour par abonnement — évite le piège du

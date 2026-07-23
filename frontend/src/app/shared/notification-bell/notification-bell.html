@@ -1,0 +1,38 @@
+<button
+  mat-icon-button
+  [matMenuTriggerFor]="menu"
+  aria-label="Notifications"
+  [matBadge]="alertes.length > 0 ? alertes.length : null"
+  matBadgeColor="warn"
+  matBadgeSize="small"
+>
+  <mat-icon>notifications</mat-icon>
+</button>
+
+<mat-menu #menu="matMenu" (opened)="rafraichir()" class="notification-menu">
+  <div class="notification-header" (click)="$event.stopPropagation()">Alertes</div>
+  <mat-divider></mat-divider>
+
+  @if (isLoading) {
+    <div class="notification-loading">
+      <mat-spinner diameter="24"></mat-spinner>
+    </div>
+  } @else if (alertes.length === 0) {
+    <div class="notification-empty">Aucune alerte pour le moment 👍</div>
+  } @else {
+    @for (a of alertes; track a.id) {
+      <a mat-menu-item [routerLink]="a.route">
+        <mat-icon [ngClass]="a.expire ? 'icon-danger' : 'icon-warn'">
+          {{ a.expire ? 'error' : 'schedule' }}
+        </mat-icon>
+        <span>
+          {{ a.titre }} — {{ a.expire ? 'expiré le' : 'expire le' }} {{ a.dateExpiration | date:'shortDate' }}
+        </span>
+      </a>
+    }
+    <mat-divider></mat-divider>
+    <a mat-menu-item routerLink="/dashboard" class="notification-footer-link">
+      Voir toutes les alertes sur le tableau de bord
+    </a>
+  }
+</mat-menu>

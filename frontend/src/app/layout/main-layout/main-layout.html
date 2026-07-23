@@ -15,15 +15,17 @@
     </div>
     <mat-nav-list>
       @for (item of navItems; track item.route) {
-        <a
-          mat-list-item
-          [routerLink]="item.route"
-          routerLinkActive="active-link"
-          (click)="fermerSiMobile(sidenav)"
-        >
-          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-          <span matListItemTitle>{{ item.label }}</span>
-        </a>
+        @if (!item.adminOnly || authService.isAdmin()) {
+          <a
+            mat-list-item
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            (click)="fermerSiMobile(sidenav)"
+          >
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.label }}</span>
+          </a>
+        }
       }
     </mat-nav-list>
   </mat-sidenav>
@@ -40,6 +42,7 @@
       @if (roleLabel && !isMobile) {
         <span class="role-badge">{{ roleLabel }}</span>
       }
+      <app-notification-bell></app-notification-bell>
       <button mat-icon-button (click)="logout()" aria-label="Se déconnecter">
         <mat-icon>logout</mat-icon>
       </button>
