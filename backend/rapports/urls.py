@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import VehiculeExportPDFView, FlotteExportExcelView
+from .dashboard_stats_view import DashboardStatsView
 
 urlpatterns = [
     path(
@@ -12,5 +13,10 @@ urlpatterns = [
         'flotte/export-excel/',
         FlotteExportExcelView.as_view(),
         name='flotte-export-excel',
+    ),
+    path(
+        'dashboard-stats/',
+        DashboardStatsView.as_view(),
+        name='dashboard-stats',
     ),
 ]

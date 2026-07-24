@@ -12,7 +12,7 @@ import { AuthService } from '../core/services/auth.service';
 import { NotificationService } from '../core/services/notification.service';
 import { Utilisateur } from '../models/utilisateur.model';
 import { UtilisateurFormDialogComponent } from '../utilisateur-form-dialog/utilisateur-form-dialog';
-import { MatTooltip } from "@angular/material/tooltip";
+import { MatTooltip } from '@angular/material/tooltip';
 
 const ROLE_LABELS: Record<string, string> = {
   admin: 'Administrateur',
@@ -31,8 +31,8 @@ const ROLE_LABELS: Record<string, string> = {
     MatDialogModule,
     MatProgressSpinnerModule,
     MatChipsModule,
-    MatTooltip
-],
+    MatTooltip,
+  ],
   templateUrl: './utilisateur-list.html',
   styleUrl: './utilisateur-list.scss',
 })
@@ -74,9 +74,7 @@ export class UtilisateurListComponent implements OnInit {
   toggleActif(utilisateur: Utilisateur): void {
     this.utilisateurService.toggleActif(utilisateur.id, !utilisateur.is_active).subscribe({
       next: () => {
-        this.notification.succes(
-          utilisateur.is_active ? 'Compte désactivé.' : 'Compte réactivé.',
-        );
+        this.notification.succes(utilisateur.is_active ? 'Compte désactivé.' : 'Compte réactivé.');
         this.fetchUtilisateurs();
       },
       error: (err) => {
