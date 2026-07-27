@@ -56,9 +56,9 @@ export class LoginComponent {
       .login({ username: username!, password: password! })
       .pipe(switchMap(() => this.authService.fetchMe()))
       .subscribe({
-        next: () => {
+        next: (me) => {
           this.isLoading = false;
-          this.router.navigate(['/dashboard']);
+          this.router.navigate([me.role === 'conducteur' ? '/mon-espace' : '/dashboard']);
         },
         error: () => {
           this.isLoading = false;

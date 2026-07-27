@@ -8,7 +8,7 @@ const ACCESS_TOKEN_KEY = 'parc_auto_access_token';
 const REFRESH_TOKEN_KEY = 'parc_auto_refresh_token';
 const ROLE_KEY = 'parc_auto_role';
 
-export type Role = 'admin' | 'gestionnaire' | 'lecture_seule';
+export type Role = 'admin' | 'gestionnaire' | 'lecture_seule' | 'conducteur';
 
 export interface MeResponse {
   username: string;
@@ -58,6 +58,10 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.getRole() === 'admin';
+  }
+
+  estConducteur(): boolean {
+    return this.getRole() === 'conducteur';
   }
 
   /** Peut créer/modifier (Admin ou Gestionnaire) */

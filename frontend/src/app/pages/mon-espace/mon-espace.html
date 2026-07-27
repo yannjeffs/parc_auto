@@ -1,0 +1,172 @@
+@if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+} @else if (aucunVehicule) {
+  <div class="empty-state">
+    <mat-icon>directions_car</mat-icon>
+    <p>Aucun véhicule ne t'est actuellement affecté.</p>
+    <p class="empty-hint">Contacte ton gestionnaire de flotte si c'est inattendu.</p>
+  </div>
+} @else if (vehicule) {
+  <mat-card class="vehicule-card">
+    @if (vehicule.photo) {
+      <img [src]="vehicule.photo" alt="Photo du véhicule" class="vehicule-photo" />
+    } @else {
+      <div class="vehicule-photo-placeholder">
+        <mat-icon>directions_car</mat-icon>
+      </div>
+    }
+    <mat-card-content>
+      <h1>{{ vehicule.immatriculation }}</h1>
+      <p class="vehicule-sous-titre">{{ vehicule.marque }} {{ vehicule.modele }} — {{ vehicule.annee }}</p>
+      <div class="vehicule-infos">
+        <div><span class="label">Statut</span><span>{{ vehicule.statut }}</span></div>
+        <div><span class="label">Kilométrage</span><span>{{ vehicule.kilometrage_actuel | number }} km</span></div>
+        <div><span class="label">Site</span><span>{{ vehicule.site_affectation || '—' }}</span></div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-tab-group class="mon-vehicule-tabs">
+    <mat-tab label="Carburant">
+      <div class="tab-content">
+        <mat-card class="form-card">
+          <mat-card-content>
+            <h2>Ajouter un plein</h2>
+            <form [formGroup]="formPlein" (ngSubmit)="ajouterPlein()">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Date</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="date_plein" />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Litres</mat-label>
+                <input matInput type="number" step="0.1" formControlName="litres" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Coût total (FCFA)</mat-label>
+                <input matInput type="number" formControlName="cout_total" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Kilométrage au plein</mat-label>
+                <input matInput type="number" formControlName="kilometrage_au_plein" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Station</mat-label>
+                <input matInput formControlName="station" placeholder="Total, Ola Energy..." />
+              </mat-form-field>
+
+              <button mat-flat-button color="primary" type="submit" class="full-width" [disabled]="isSavingPlein">
+                @if (isSavingPlein) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                } @else {
+                  Enregistrer le plein
+                }
+              </button>
+            </form>
+          </mat-card-content>
+        </mat-card>
+
+        <h3 class="historique-titre">Historique</h3>
+        @if (pleinsCarburant.length === 0) {
+          <p class="empty-mini">Aucun plein enregistré.</p>
+        } @else {
+          @for (p of pleinsCarburant; track p.id) {
+            <mat-card class="historique-item">
+              <mat-card-content>
+                <div class="historique-ligne">
+                  <span class="historique-date">{{ p.date_plein | date:'shortDate' }}</span>
+                  <span class="historique-montant">{{ p.cout_total | number }} FCFA</span>
+                </div>
+                <div class="historique-detail">{{ p.litres }} L — {{ p.station || 'Station non renseignée' }}</div>
+              </mat-card-content>
+            </mat-card>
+          }
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Signaler">
+      <div class="tab-content">
+        <mat-card class="form-card">
+          <mat-card-content>
+            <h2>Signaler un problème</h2>
+            <form [formGroup]="formSignalement" (ngSubmit)="signalerProbleme()">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Description du problème</mat-label>
+                <textarea matInput formControlName="description" rows="3" placeholder="Ex : bruit anormal au freinage"></textarea>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Date</mat-label>
+                <input matInput [matDatepicker]="picker2" formControlName="date_intervention" />
+                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Kilométrage actuel</mat-label>
+                <input matInput type="number" formControlName="kilometrage_intervention" />
+              </mat-form-field>
+
+              <button mat-flat-button color="primary" type="submit" class="full-width" [disabled]="isSavingSignalement">
+                @if (isSavingSignalement) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                } @else {
+                  Envoyer le signalement
+                }
+              </button>
+            </form>
+          </mat-card-content>
+        </mat-card>
+
+        <h3 class="historique-titre">Signalements précédents</h3>
+        @if (maintenances.length === 0) {
+          <p class="empty-mini">Aucun signalement pour le moment.</p>
+        } @else {
+          @for (m of maintenances; track m.id) {
+            <mat-card class="historique-item">
+              <mat-card-content>
+                <div class="historique-ligne">
+                  <span class="historique-date">{{ m.date_intervention | date:'shortDate' }}</span>
+                  <span class="statut-chip" [ngClass]="'statut-' + m.statut">{{ m.statut }}</span>
+                </div>
+                <div class="historique-detail">{{ m.description }}</div>
+              </mat-card-content>
+            </mat-card>
+          }
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Documents">
+      <div class="tab-content">
+        @if (documents.length === 0) {
+          <p class="empty-mini">Aucun document enregistré.</p>
+        } @else {
+          @for (d of documents; track d.id) {
+            <mat-card class="historique-item">
+              <mat-card-content>
+                <div class="historique-ligne">
+                  <span>{{ d.type_document }}</span>
+                  <span class="statut-chip" [ngClass]="d.est_valide ? 'statut-ok' : 'statut-danger'">
+                    {{ d.est_valide ? 'Valide' : 'Expiré' }}
+                  </span>
+                </div>
+                <div class="historique-detail">
+                  {{ d.est_valide ? 'Expire le' : 'Expiré le' }} {{ d.date_expiration | date:'longDate' }}
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+}

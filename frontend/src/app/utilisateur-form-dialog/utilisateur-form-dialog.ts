@@ -20,6 +20,7 @@ const ROLE_OPTIONS: { value: Role; label: string }[] = [
   { value: 'admin', label: 'Administrateur' },
   { value: 'gestionnaire', label: 'Gestionnaire' },
   { value: 'lecture_seule', label: 'Lecture seule' },
+  { value: 'conducteur', label: 'Conducteur' },
 ];
 
 @Component({

@@ -18,6 +18,7 @@ const ROLE_LABELS: Record<string, string> = {
   admin: 'Administrateur',
   gestionnaire: 'Gestionnaire',
   lecture_seule: 'Lecture seule',
+  conducteur: 'Conducteur',
 };
 
 @Component({

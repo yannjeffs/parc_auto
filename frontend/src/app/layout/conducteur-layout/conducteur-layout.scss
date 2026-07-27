@@ -1,0 +1,24 @@
+.conducteur-shell {
+  min-height: 100vh;
+  background: #f4f5f7;
+}
+
+.brand-mark {
+  width: 26px;
+  height: 26px;
+  margin-right: 0.5rem;
+}
+
+.toolbar-title {
+  font-weight: 600;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.conducteur-content {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 1rem;
+}

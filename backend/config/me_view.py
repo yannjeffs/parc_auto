@@ -16,6 +16,8 @@ def _determiner_role(user) -> str:
         return "admin"
     if user.groups.filter(name="Gestionnaire").exists():
         return "gestionnaire"
+    if user.groups.filter(name="Conducteur").exists():
+        return "conducteur"
     return "lecture_seule"
 
 

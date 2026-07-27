@@ -16,6 +16,26 @@ class AffectationSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
 
+    def validate(self, attrs):
+        # date_fin absente (création) = affectation active. On vérifie AVANT l'insertion
+        # plutôt que de laisser la contrainte unique en base remonter une IntegrityError
+        # brute (500) — ici on transforme ça en erreur de validation propre (400).
+        date_fin = attrs.get("date_fin", getattr(self.instance, "date_fin", None) if self.instance else None)
+        vehicule = attrs.get("vehicule", getattr(self.instance, "vehicule", None))
+
+        if date_fin is None and vehicule is not None:
+            conflit = Affectation.objects.filter(vehicule=vehicule, date_fin__isnull=True)
+            if self.instance:
+                conflit = conflit.exclude(pk=self.instance.pk)
+            if conflit.exists():
+                raise serializers.ValidationError({
+                    "non_field_errors": [
+                        "Ce véhicule a déjà un conducteur actif. Termine d'abord l'affectation en cours "
+                        "avant d'en créer une nouvelle."
+                    ]
+                })
+        return attrs
+
 
 class VehiculeSerializer(serializers.ModelSerializer):
     conducteur_actuel = serializers.SerializerMethodField()

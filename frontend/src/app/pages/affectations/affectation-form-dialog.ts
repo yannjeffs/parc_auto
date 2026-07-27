@@ -55,7 +55,7 @@ export class AffectationFormDialogComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.vehiculeService.list({ page_size: 200 }).subscribe({
+    this.vehiculeService.list({ page_size: 200, disponible: true }).subscribe({
       next: (response) => (this.vehicules = response.results),
       error: () => undefined,
     });

@@ -1,0 +1,149 @@
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: rgba(0, 0, 0, 0.6);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    opacity: 0.4;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-hint {
+    font-size: 0.85rem;
+    color: rgba(0, 0, 0, 0.45);
+  }
+}
+
+.vehicule-card {
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.vehicule-photo {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.vehicule-photo-placeholder {
+  width: 100%;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eceff1;
+  color: #90a4ae;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.vehicule-card h1 {
+  margin: 0.75rem 0 0.1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.vehicule-sous-titre {
+  margin: 0 0 0.75rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.vehicule-infos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .label {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.45);
+  }
+}
+
+.tab-content {
+  padding: 1rem 0.25rem;
+}
+
+.form-card {
+  margin-bottom: 1.25rem;
+
+  h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.historique-titre {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.empty-mini {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 0.9rem;
+}
+
+.historique-item {
+  margin-bottom: 0.5rem;
+}
+
+.historique-ligne {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+
+.historique-date {
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.historique-montant {
+  font-weight: 600;
+}
+
+.historique-detail {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.statut-chip {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+
+  &.statut-ok, &.statut-terminee { background: #e3f5e6; color: #1e7a34; }
+  &.statut-danger { background: #fde3e3; color: #b3261e; }
+  &.statut-planifiee { background: #fff4e0; color: #a86400; }
+  &.statut-en_cours { background: #e3f0fd; color: #1976d2; }
+  &.statut-annulee { background: #eceff1; color: #546e7a; }
+}

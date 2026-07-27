@@ -17,6 +17,7 @@ export class VehiculeService {
     search?: string;
     page?: number;
     page_size?: number;
+    disponible?: boolean;
   }): Observable<PaginatedResponse<VehiculeListItem>> {
     let params = new HttpParams();
     if (filters?.statut) params = params.set('statut', filters.statut);
@@ -24,6 +25,7 @@ export class VehiculeService {
     if (filters?.search) params = params.set('search', filters.search);
     if (filters?.page) params = params.set('page', filters.page);
     if (filters?.page_size) params = params.set('page_size', filters.page_size);
+    if (filters?.disponible) params = params.set('disponible', 'true');
 
     return this.http.get<PaginatedResponse<VehiculeListItem>>(this.baseUrl, { params });
   }

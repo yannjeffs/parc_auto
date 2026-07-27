@@ -21,6 +21,7 @@ ROLE_VERS_GROUPE = {
     "admin": "Admin",
     "gestionnaire": "Gestionnaire",
     "lecture_seule": "LectureSeule",
+    "conducteur": "Conducteur",
 }
 
 
@@ -29,6 +30,8 @@ def _role_depuis_groupes(user) -> str:
         return "admin"
     if user.groups.filter(name="Gestionnaire").exists():
         return "gestionnaire"
+    if user.groups.filter(name="Conducteur").exists():
+        return "conducteur"
     return "lecture_seule"
 
 
