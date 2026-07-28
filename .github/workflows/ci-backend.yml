@@ -1,0 +1,66 @@
+name: CI Backend
+
+on:
+  push:
+    branches: [main, master, develop]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci-backend.yml'
+  pull_request:
+    branches: [main, master, develop]
+    paths:
+      - 'backend/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: parc_auto_test
+          POSTGRES_USER: parc_auto_user
+          POSTGRES_PASSWORD: parc_auto_test_password
+        ports:
+          - 5432:5432
+        # Attend que PostgreSQL soit vraiment prêt avant de lancer les tests,
+        # sinon Django tente de se connecter trop tôt et échoue au démarrage.
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DB_NAME: parc_auto_test
+      DB_USER: parc_auto_user
+      DB_PASSWORD: parc_auto_test_password
+      DB_HOST: localhost
+      DB_PORT: 5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Appliquer les migrations
+        run: python manage.py migrate --noinput
+
+      - name: Lancer les tests
+        run: python manage.py test
+
+      - name: Vérifier qu'il n'y a pas de migrations manquantes
+        run: python manage.py makemigrations --check --dry-run
