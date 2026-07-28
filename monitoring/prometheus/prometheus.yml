@@ -1,0 +1,25 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Django (via django-prometheus) — tourne nativement sur l'hôte, pas en conteneur
+  - job_name: 'django'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+
+  # PostgreSQL — via postgres_exporter (conteneur), qui lui-même se connecte
+  # au PostgreSQL de l'hôte
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  # Système (CPU/RAM/disque) — de la VM Docker Desktop, pas de Windows directement
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']

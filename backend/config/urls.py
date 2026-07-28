@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import (
 from config.me_view import MeView
 
 urlpatterns = [
+    path("", include("django_prometheus.urls")),  # expose /metrics
     path("admin/", admin.site.urls),
 
     path("api/", include("vehicules.urls")),

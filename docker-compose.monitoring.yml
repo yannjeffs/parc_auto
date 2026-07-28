@@ -1,0 +1,73 @@
+# docker-compose.monitoring.yml
+# ================================
+# Stack de monitoring indépendante — Django et PostgreSQL continuent de tourner
+# nativement (venv + service PostgreSQL Windows), ces conteneurs les observent
+# depuis l'extérieur via host.docker.internal.
+#
+# Lancement : docker compose -f docker-compose.monitoring.yml up -d
+# Arrêt     : docker compose -f docker-compose.monitoring.yml down
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: parc_auto_prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: parc_auto_grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      # Change ce mot de passe si tu exposes Grafana au-delà de ta machine.
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    container_name: parc_auto_postgres_exporter
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATA_SOURCE_NAME=postgresql://${DB_USER}:${DB_PASSWORD}@host.docker.internal:5432/${DB_NAME}?sslmode=disable
+    ports:
+      - "9187:9187"
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: parc_auto_node_exporter
+    pid: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+
+volumes:
+  prometheus_data:
+  grafana_data:
