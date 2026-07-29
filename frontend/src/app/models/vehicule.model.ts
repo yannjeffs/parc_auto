@@ -7,6 +7,16 @@ export type StatutVehicule =
   | 'hors_service'
   | 'vendu';
 
+export type TypeTransmission = 'Manuelle' | 'Automatique';
+export type TypeTraction = 'FWD' | 'RWD' | '4x4' | 'AWD';
+
+export interface Caracteristiques {
+  transmission?: TypeTransmission;
+  traction?: TypeTraction;
+  puissance_ch?: number;
+  [key: string]: unknown;
+}
+
 export interface Vehicule {
   id: string;
   immatriculation: string;
@@ -18,7 +28,7 @@ export interface Vehicule {
   type_carburant: TypeCarburant;
   cylindree_cm3: number | null;
   nombre_places: number;
-  caracteristiques: Record<string, unknown>;
+  caracteristiques: Caracteristiques;
   statut: StatutVehicule;
   kilometrage_actuel: number;
   site_affectation: string;

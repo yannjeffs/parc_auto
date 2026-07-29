@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,6 +16,12 @@ import { ConducteurService } from '../../core/services/conducteur.service';
 import { Affectation } from '../../models/affectation.model';
 import { VehiculeListItem } from '../../models/vehicule.model';
 import { Conducteur } from '../../models/conducteur.model';
+
+export interface AffectationFormData {
+  /** Fourni depuis la fiche véhicule : le champ véhicule est alors verrouillé. */
+  vehiculeId?: string;
+  vehiculeLabel?: string;
+}
 
 @Component({
   selector: 'app-affectation-form-dialog',
@@ -41,24 +47,28 @@ export class AffectationFormDialogComponent implements OnInit {
   private vehiculeService = inject(VehiculeService);
   private conducteurService = inject(ConducteurService);
   private dialogRef = inject(MatDialogRef<AffectationFormDialogComponent>);
+  data: AffectationFormData = inject(MAT_DIALOG_DATA, { optional: true }) || {};
 
   isSaving = false;
   errorMessage: string | null = null;
   vehicules: VehiculeListItem[] = [];
   conducteurs: Conducteur[] = [];
+  vehiculeVerrouille = !!this.data?.vehiculeId;
 
   form = this.fb.group({
-    vehicule: ['', Validators.required],
+    vehicule: [this.data?.vehiculeId || '', Validators.required],
     conducteur: ['', Validators.required],
     date_debut: [new Date(), Validators.required],
     motif: [''],
   });
 
   ngOnInit(): void {
-    this.vehiculeService.list({ page_size: 200, disponible: true }).subscribe({
-      next: (response) => (this.vehicules = response.results),
-      error: () => undefined,
-    });
+    if (!this.vehiculeVerrouille) {
+      this.vehiculeService.list({ page_size: 200, disponible: true }).subscribe({
+        next: (response) => (this.vehicules = response.results),
+        error: () => undefined,
+      });
+    }
     this.conducteurService.list({ page_size: 100 }).subscribe({
       next: (response) => (this.conducteurs = response.results),
       error: () => undefined,

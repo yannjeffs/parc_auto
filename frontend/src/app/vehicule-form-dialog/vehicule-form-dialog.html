@@ -140,6 +140,36 @@
         <mat-error>Doit être supérieur à 0.</mat-error>
       }
     </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Cylindrée (cm³)</mat-label>
+      <input matInput type="number" formControlName="cylindree_cm3" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Transmission</mat-label>
+      <mat-select formControlName="transmission">
+        <mat-option [value]="null">— Non renseignée —</mat-option>
+        @for (opt of transmissionOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Traction</mat-label>
+      <mat-select formControlName="traction">
+        <mat-option [value]="null">— Non renseignée —</mat-option>
+        @for (opt of tractionOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Puissance (ch)</mat-label>
+      <input matInput type="number" formControlName="puissance_ch" />
+    </mat-form-field>
   </mat-dialog-content>
 
   @if (errorMessage) {

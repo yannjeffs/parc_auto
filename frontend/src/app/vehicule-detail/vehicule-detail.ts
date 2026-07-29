@@ -10,32 +10,31 @@ import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
-
-import { VehiculeService } from '../core/services/vehicule.service';
-import { MaintenanceService } from '../core/services/maintenance.service';
+import { CarburantFormDialogComponent } from '../carburant-form-dialog/carburant-form-dialog';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog';
+import { AffectationService } from '../core/services/affectation.service';
+import { AuthService } from '../core/services/auth.service';
 import { CarburantService } from '../core/services/carburant.service';
 import { DocumentService } from '../core/services/document.service';
-
-import { Vehicule } from '../models/vehicule.model';
-import { Maintenance } from '../models/maintenance.model';
+import { MaintenanceService } from '../core/services/maintenance.service';
+import { NotificationService } from '../core/services/notification.service';
+import { RapportService } from '../core/services/rapport.service';
+import { VehiculeService } from '../core/services/vehicule.service';
+import { DocumentFormDialogComponent } from '../document-form-dialog/document-form-dialog';
+import { MaintenanceFormDialogComponent } from '../maintenance-form-dialog/maintenance-form-dialog';
+import { Affectation } from '../models/affectation.model';
 import { PleinCarburant } from '../models/carburant.model';
 import { DocumentVehicule } from '../models/document.model';
+import { Maintenance } from '../models/maintenance.model';
+import { Vehicule } from '../models/vehicule.model';
+import { AffectationFormDialogComponent } from '../pages/affectations/affectation-form-dialog';
 
-import { MaintenanceFormDialogComponent } from '../maintenance-form-dialog/maintenance-form-dialog';
-import { CarburantFormDialogComponent } from '../carburant-form-dialog/carburant-form-dialog';
-import { DocumentFormDialogComponent } from '../document-form-dialog/document-form-dialog';
-import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog';
-import { RapportService } from '../core/services/rapport.service';
-import { AuthService } from '../core/services/auth.service';
-import { NotificationService } from '../core/services/notification.service';
-import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-vehicule-detail',
   standalone: true,
   imports: [
     CommonModule,
-    // RouterLink,
     MatTabsModule,
     MatCardModule,
     MatChipsModule,
@@ -44,7 +43,6 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatTableModule,
     MatProgressSpinnerModule,
     MatDialogModule,
-    MatTooltip
   ],
   templateUrl: './vehicule-detail.html',
   styleUrl: './vehicule-detail.scss',
@@ -54,6 +52,7 @@ export class VehiculeDetailComponent implements OnInit {
   maintenances: Maintenance[] = [];
   pleinsCarburant: PleinCarburant[] = [];
   documents: DocumentVehicule[] = [];
+  affectationActive: Affectation | null = null;
   isLoading = true;
   notFound = false;
 
@@ -68,6 +67,7 @@ export class VehiculeDetailComponent implements OnInit {
     private maintenanceService: MaintenanceService,
     private carburantService: CarburantService,
     private documentService: DocumentService,
+    private affectationService: AffectationService,
     private dialog: MatDialog,
     private rapportService: RapportService,
     public authService: AuthService,
@@ -115,12 +115,14 @@ export class VehiculeDetailComponent implements OnInit {
       maintenances: this.maintenanceService.list({ vehicule: id }),
       pleins: this.carburantService.list({ vehicule: id }),
       documents: this.documentService.list({ vehicule: id }),
+      affectations: this.affectationService.list({ vehicule: id, actif: true }),
     }).subscribe({
-      next: ({ vehicule, maintenances, pleins, documents }) => {
+      next: ({ vehicule, maintenances, pleins, documents, affectations }) => {
         this.vehicule = vehicule;
         this.maintenances = maintenances.results;
         this.pleinsCarburant = pleins.results;
         this.documents = documents.results;
+        this.affectationActive = affectations.results[0] || null;
         this.isLoading = false;
       },
       error: (err) => {
@@ -149,6 +151,50 @@ export class VehiculeDetailComponent implements OnInit {
     if (this.vehicule) {
       this.loadVehiculeEtHistorique(this.vehicule.id);
     }
+  }
+
+  // --- Affectation ---
+
+  assignerConducteur(): void {
+    const dialogRef = this.dialog.open(AffectationFormDialogComponent, {
+      data: {
+        vehiculeId: this.vehicule!.id,
+        vehiculeLabel: `${this.vehicule!.immatriculation} — ${this.vehicule!.marque} ${this.vehicule!.modele}`,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.notification.succes('Conducteur assigné.');
+        this.rafraichirHistorique();
+      }
+    });
+  }
+
+  terminerAffectation(): void {
+    if (!this.affectationActive) return;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: "Terminer cette affectation ?",
+        message: `${this.affectationActive.conducteur_nom} ne sera plus rattaché à ce véhicule à partir d'aujourd'hui.`,
+        confirmLabel: 'Terminer',
+      },
+    });
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        const aujourdhui = new Date().toISOString().split('T')[0];
+        this.affectationService.terminer(this.affectationActive!.id, aujourdhui).subscribe({
+          next: () => {
+            this.notification.succes('Affectation terminée.');
+            this.rafraichirHistorique();
+          },
+          error: (err) => {
+            this.notification.erreur(
+              this.notification.messageErreurApi(err, 'Échec de la mise à jour.'),
+            );
+          },
+        });
+      }
+    });
   }
 
   // --- Maintenance ---

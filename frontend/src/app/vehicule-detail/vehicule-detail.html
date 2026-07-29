@@ -36,6 +36,35 @@
             </div>
           }
         </div>
+        <mat-card class="conducteur-card">
+          <mat-card-content>
+            <div class="conducteur-header">
+              <span class="label">Conducteur actuel</span>
+              @if (affectationActive) {
+                <div class="conducteur-row">
+                  <span class="conducteur-nom">{{ affectationActive.conducteur_nom }}</span>
+                  @if (authService.peutEcrire()) {
+                    <button mat-stroked-button color="warn" (click)="terminerAffectation()">
+                      <mat-icon>person_remove</mat-icon>
+                      Terminer l'affectation
+                    </button>
+                  }
+                </div>
+              } @else {
+                <div class="conducteur-row">
+                  <span class="conducteur-nom conducteur-aucun">Aucun conducteur assigné</span>
+                  @if (authService.peutEcrire()) {
+                    <button mat-flat-button color="primary" (click)="assignerConducteur()">
+                      <mat-icon>person_add</mat-icon>
+                      Assigner un conducteur
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+
         <mat-card>
           <mat-card-content class="info-grid">
             <div><span class="label">Statut</span><span>{{ vehicule.statut }}</span></div>
@@ -43,10 +72,13 @@
             <div><span class="label">Carburant</span><span>{{ vehicule.type_carburant }}</span></div>
             <div><span class="label">Kilométrage</span><span>{{ vehicule.kilometrage_actuel | number }} km</span></div>
             <div><span class="label">Site</span><span>{{ vehicule.site_affectation || '—' }}</span></div>
-            <div><span class="label">Conducteur actuel</span><span>{{ vehicule.conducteur_actuel || 'Aucun' }}</span></div>
             <div><span class="label">N° châssis</span><span>{{ vehicule.numero_chassis }}</span></div>
             <div><span class="label">Date d'acquisition</span><span>{{ vehicule.date_acquisition | date:'longDate' }}</span></div>
             <div><span class="label">Prix d'acquisition</span><span>{{ vehicule.prix_acquisition | number }} FCFA</span></div>
+            <div><span class="label">Cylindrée</span><span>{{ vehicule.cylindree_cm3 ? (vehicule.cylindree_cm3 + ' cm³') : '—' }}</span></div>
+            <div><span class="label">Transmission</span><span>{{ vehicule.caracteristiques.transmission || '—' }}</span></div>
+            <div><span class="label">Traction</span><span>{{ vehicule.caracteristiques.traction || '—' }}</span></div>
+            <div><span class="label">Puissance</span><span>{{ vehicule.caracteristiques.puissance_ch ? (vehicule.caracteristiques.puissance_ch + ' ch') : '—' }}</span></div>
           </mat-card-content>
         </mat-card>
       </div>
@@ -84,12 +116,12 @@
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let m">
               @if (authService.peutEcrire()) {
-                <button mat-icon-button (click)="openEditMaintenance(m)" matTooltip="Modifier" aria-label="Modifier">
+                <button mat-icon-button (click)="openEditMaintenance(m)" aria-label="Modifier">
                   <mat-icon>edit</mat-icon>
                 </button>
               }
               @if (authService.peutSupprimer()) {
-                <button mat-icon-button (click)="confirmDeleteMaintenance(m)" matTooltip="Supprimer" aria-label="Supprimer">
+                <button mat-icon-button (click)="confirmDeleteMaintenance(m)" aria-label="Supprimer">
                   <mat-icon>delete</mat-icon>
                 </button>
               }
@@ -140,12 +172,12 @@
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let p">
               @if (authService.peutEcrire()) {
-                <button mat-icon-button (click)="openEditCarburant(p)" matTooltip="Modifier" aria-label="Modifier">
+                <button mat-icon-button (click)="openEditCarburant(p)" aria-label="Modifier">
                   <mat-icon>edit</mat-icon>
                 </button>
               }
               @if (authService.peutSupprimer()) {
-                <button mat-icon-button (click)="confirmDeleteCarburant(p)" matTooltip="Supprimer" aria-label="Supprimer">
+                <button mat-icon-button (click)="confirmDeleteCarburant(p)" aria-label="Supprimer">
                   <mat-icon>delete</mat-icon>
                 </button>
               }

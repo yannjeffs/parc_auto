@@ -11,8 +11,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
+import {
+  Vehicule, TypeVehicule, TypeCarburant, StatutVehicule, TypeTransmission, TypeTraction,
+} from '../models/vehicule.model';
 import { VehiculeService } from '../core/services/vehicule.service';
-import { Vehicule, TypeVehicule, TypeCarburant, StatutVehicule } from '../models/vehicule.model';
 
 export interface VehiculeFormData {
   vehicule?: Vehicule;
@@ -40,6 +42,18 @@ const STATUT_OPTIONS: { value: StatutVehicule; label: string }[] = [
   { value: 'en_panne', label: 'En panne' },
   { value: 'hors_service', label: 'Hors service' },
   { value: 'vendu', label: 'Vendu' },
+];
+
+const TRANSMISSION_OPTIONS: { value: TypeTransmission; label: string }[] = [
+  { value: 'Manuelle', label: 'Manuelle' },
+  { value: 'Automatique', label: 'Automatique' },
+];
+
+const TRACTION_OPTIONS: { value: TypeTraction; label: string }[] = [
+  { value: 'FWD', label: 'FWD (traction avant)' },
+  { value: 'RWD', label: 'RWD (propulsion arrière)' },
+  { value: '4x4', label: '4x4' },
+  { value: 'AWD', label: 'AWD (transmission intégrale)' },
 ];
 
 @Component({
@@ -74,6 +88,8 @@ export class VehiculeFormDialogComponent {
   typeVehiculeOptions = TYPE_VEHICULE_OPTIONS;
   typeCarburantOptions = TYPE_CARBURANT_OPTIONS;
   statutOptions = STATUT_OPTIONS;
+  transmissionOptions = TRANSMISSION_OPTIONS;
+  tractionOptions = TRACTION_OPTIONS;
 
   form = this.fb.group({
     immatriculation: ['', [Validators.required, Validators.pattern(/^[A-Z0-9 -]{4,15}$/i)]],
@@ -92,6 +108,10 @@ export class VehiculeFormDialogComponent {
     site_affectation: [''],
     date_acquisition: [new Date(), Validators.required],
     prix_acquisition: [0, [Validators.required, Validators.min(1)]],
+    cylindree_cm3: [null as number | null, [Validators.min(0)]],
+    transmission: [null as TypeTransmission | null],
+    traction: [null as TypeTraction | null],
+    puissance_ch: [null as number | null, [Validators.min(0)]],
   });
 
   selectedPhotoFile: File | null = null;
@@ -115,6 +135,10 @@ export class VehiculeFormDialogComponent {
         site_affectation: v.site_affectation,
         date_acquisition: new Date(v.date_acquisition),
         prix_acquisition: Number(v.prix_acquisition),
+        cylindree_cm3: v.cylindree_cm3,
+        transmission: v.caracteristiques?.transmission ?? null,
+        traction: v.caracteristiques?.traction ?? null,
+        puissance_ch: v.caracteristiques?.puissance_ch ?? null,
       });
     }
   }
@@ -149,10 +173,16 @@ export class VehiculeFormDialogComponent {
     this.errorMessage = null;
 
     const raw = this.form.value;
+    const { transmission, traction, puissance_ch, ...reste } = raw;
     const payload: Partial<Vehicule> = {
-      ...raw,
+      ...reste,
       date_acquisition: (raw.date_acquisition as Date).toISOString().split('T')[0],
       prix_acquisition: String(raw.prix_acquisition),
+      caracteristiques: {
+        ...(transmission ? { transmission } : {}),
+        ...(traction ? { traction } : {}),
+        ...(puissance_ch ? { puissance_ch } : {}),
+      },
     } as Partial<Vehicule>;
 
     const request$ = this.isEdition

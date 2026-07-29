@@ -6,6 +6,7 @@ from config.permissions import PeutCreerOuGestionnaire
 from vehicules.utils import vehicule_actif_pour
 from .models import Maintenance
 from .serializers import MaintenanceSerializer
+from .filters import MaintenanceFilter
 
 
 def _est_conducteur_seul(user) -> bool:
@@ -20,7 +21,7 @@ class MaintenanceViewSet(viewsets.ModelViewSet):
     serializer_class = MaintenanceSerializer
     permission_classes = [PeutCreerOuGestionnaire]
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["vehicule", "type_maintenance", "statut"]
+    filterset_class = MaintenanceFilter
 
     def get_queryset(self):
         qs = super().get_queryset()

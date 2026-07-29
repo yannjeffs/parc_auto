@@ -2,17 +2,24 @@
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-dialog-content class="form-grid">
-    <mat-form-field appearance="outline">
-      <mat-label>Véhicule</mat-label>
-      <mat-select formControlName="vehicule">
-        @for (v of vehicules; track v.id) {
-          <mat-option [value]="v.id">{{ v.immatriculation }} — {{ v.marque }} {{ v.modele }}</mat-option>
+    @if (vehiculeVerrouille) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Véhicule</mat-label>
+        <input matInput [value]="data.vehiculeLabel || 'Ce véhicule'" disabled />
+      </mat-form-field>
+    } @else {
+      <mat-form-field appearance="outline">
+        <mat-label>Véhicule</mat-label>
+        <mat-select formControlName="vehicule">
+          @for (v of vehicules; track v.id) {
+            <mat-option [value]="v.id">{{ v.immatriculation }} — {{ v.marque }} {{ v.modele }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.vehicule.hasError('required') && form.controls.vehicule.touched) {
+          <mat-error>Sélectionne un véhicule.</mat-error>
         }
-      </mat-select>
-      @if (form.controls.vehicule.hasError('required') && form.controls.vehicule.touched) {
-        <mat-error>Sélectionne un véhicule.</mat-error>
-      }
-    </mat-form-field>
+      </mat-form-field>
+    }
 
     <mat-form-field appearance="outline">
       <mat-label>Conducteur</mat-label>
