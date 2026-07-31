@@ -1,6 +1,6 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { of } from 'rxjs';
-import { commonTestProviders, mockDialogProviders } from '../../test-provider';
+import { commonTestProviders } from '../../test-provider';
 import { AffectationDetailDialogComponent } from './affectation-detail-dialog';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
