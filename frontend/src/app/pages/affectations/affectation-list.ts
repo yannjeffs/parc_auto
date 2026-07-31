@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AffectationService } from '../../core/services/affectation.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -15,6 +16,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { Affectation } from '../../models/affectation.model';
 import { AffectationFormDialogComponent } from './affectation-form-dialog';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
+import { AffectationDetailDialogComponent } from './affectation-detail-dialog';
 
 @Component({
   selector: 'app-affectation-list',
@@ -29,6 +31,7 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
     MatSlideToggleModule,
     MatDialogModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
   ],
   templateUrl: './affectation-list.html',
   styleUrl: './affectation-list.scss',
@@ -70,6 +73,13 @@ export class AffectationListComponent implements OnInit {
         this.notification.succes('Affectation créée.');
         this.fetchAffectations();
       }
+    });
+  }
+
+  voirDetail(affectation: Affectation): void {
+    this.dialog.open(AffectationDetailDialogComponent, {
+      data: { affectation },
+      width: '600px',
     });
   }
 

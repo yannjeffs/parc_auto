@@ -11,12 +11,13 @@ export class CarburantService {
 
   constructor(private http: HttpClient) {}
 
-  list(filters?: { vehicule?: string; conducteur?: string; page?: number }):
+  list(filters?: { vehicule?: string; conducteur?: string; page?: number; page_size?: number }):
     Observable<PaginatedResponse<PleinCarburant>> {
     let params = new HttpParams();
     if (filters?.vehicule) params = params.set('vehicule', filters.vehicule);
     if (filters?.conducteur) params = params.set('conducteur', filters.conducteur);
     if (filters?.page) params = params.set('page', filters.page);
+    if (filters?.page_size) params = params.set('page_size', filters.page_size);
 
     return this.http.get<PaginatedResponse<PleinCarburant>>(this.baseUrl, { params });
   }

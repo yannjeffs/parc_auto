@@ -11,13 +11,14 @@ export class MaintenanceService {
 
   constructor(private http: HttpClient) {}
 
-  list(filters?: { vehicule?: string; type_maintenance?: string; statut?: string; page?: number }):
+  list(filters?: { vehicule?: string; type_maintenance?: string; statut?: string; page?: number; page_size?: number }):
     Observable<PaginatedResponse<Maintenance>> {
     let params = new HttpParams();
     if (filters?.vehicule) params = params.set('vehicule', filters.vehicule);
     if (filters?.type_maintenance) params = params.set('type_maintenance', filters.type_maintenance);
     if (filters?.statut) params = params.set('statut', filters.statut);
     if (filters?.page) params = params.set('page', filters.page);
+    if (filters?.page_size) params = params.set('page_size', filters.page_size);
 
     return this.http.get<PaginatedResponse<Maintenance>>(this.baseUrl, { params });
   }

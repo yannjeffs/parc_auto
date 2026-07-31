@@ -59,6 +59,9 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let a">
+        <button mat-icon-button (click)="voirDetail(a)" aria-label="Voir les opérations" matTooltip="Voir les opérations">
+          <mat-icon>visibility</mat-icon>
+        </button>
         @if (!a.date_fin && authService.peutEcrire()) {
           <button mat-button color="warn" (click)="confirmTerminer(a)">
             Terminer

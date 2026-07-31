@@ -137,7 +137,7 @@ export class VehiculeListComponent implements OnInit {
         const dialogRef = this.dialog.open(VehiculeFormDialogComponent, { data: { vehicule } });
         dialogRef.afterClosed().subscribe((result) => {
           if (result) {
-            this.notification.succes('Véhicule modifié avec succès.');
+            this.notification.succes('Informations du véhicule modifiées avec succès.');
             this.fetchVehicules(this.currentSearch);
           }
         });
