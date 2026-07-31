@@ -1,18 +1,18 @@
+import { AffectationDetailDialogComponent } from './affectation-detail-dialog';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VehiculeListComponent } from './vehicule-list';
 
 describe('VehiculeListComponent', () => {
-  let component: VehiculeListComponent;
-  let fixture: ComponentFixture<VehiculeListComponent>;
+  let component: AffectationDetailDialogComponent;
+  let fixture: ComponentFixture<AffectationDetailDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VehiculeListComponent]
+      imports: [AffectationDetailDialogComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(VehiculeListComponent);
+    fixture = TestBed.createComponent(AffectationDetailDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

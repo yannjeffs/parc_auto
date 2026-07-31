@@ -1,18 +1,18 @@
+import { AffectationListComponent } from './affectation-list';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConducteurListComponent } from './conducteur-list';
 
-describe('ConducteurListComponent', () => {
-  let component: ConducteurListComponent;
-  let fixture: ComponentFixture<ConducteurListComponent>;
+describe('VehiculeListComponent', () => {
+  let component: AffectationListComponent;
+  let fixture: ComponentFixture<AffectationListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ConducteurListComponent]
+      imports: [AffectationListComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ConducteurListComponent);
+    fixture = TestBed.createComponent(AffectationListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

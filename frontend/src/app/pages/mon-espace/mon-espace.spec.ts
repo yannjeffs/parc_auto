@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MonEspace } from './mon-espace';
+import { MonEspaceComponent } from './mon-espace';
 
-describe('MonEspace', () => {
-  let component: MonEspace;
-  let fixture: ComponentFixture<MonEspace>;
+describe('MonEspaceComponent', () => {
+  let component: MonEspaceComponent;
+  let fixture: ComponentFixture<MonEspaceComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MonEspace]
+      imports: [MonEspaceComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MonEspace);
+    fixture = TestBed.createComponent(MonEspaceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConducteurLayout } from './conducteur-layout';
+import { ConducteurLayoutComponent } from './conducteur-layout';
 
-describe('ConducteurLayout', () => {
-  let component: ConducteurLayout;
-  let fixture: ComponentFixture<ConducteurLayout>;
+describe('ConducteurLayoutComponent', () => {
+  let component: ConducteurLayoutComponent;
+  let fixture: ComponentFixture<ConducteurLayoutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ConducteurLayout]
+      imports: [ConducteurLayoutComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ConducteurLayout);
+    fixture = TestBed.createComponent(ConducteurLayoutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MaintenanceFormDialog } from './maintenance-form-dialog';
+import { MaintenanceFormDialogComponent } from './maintenance-form-dialog';
 
 describe('MaintenanceFormDialog', () => {
-  let component: MaintenanceFormDialog;
-  let fixture: ComponentFixture<MaintenanceFormDialog>;
+  let component: MaintenanceFormDialogComponent;
+  let fixture: ComponentFixture<MaintenanceFormDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MaintenanceFormDialog]
+      imports: [MaintenanceFormDialogComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MaintenanceFormDialog);
+    fixture = TestBed.createComponent(MaintenanceFormDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
