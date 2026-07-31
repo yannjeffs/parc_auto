@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DocumentListComponent } from './document-list';
+import { commonTestProviders } from '../test-provider';
 
 describe('DocumentListComponent', () => {
   let component: DocumentListComponent;
@@ -8,7 +9,10 @@ describe('DocumentListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DocumentListComponent]
+      imports: [DocumentListComponent],
+      providers: [
+        ...commonTestProviders
+      ]
     })
     .compileComponents();
 

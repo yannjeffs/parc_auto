@@ -1,14 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NotificationBellComponent } from './notification-bell';
+import { commonTestProviders, mockDialogProviders } from '../../test-provider';
 
 
-describe('VehiculeListComponent', () => {
+describe('NotificationBellComponent', () => {
   let component: NotificationBellComponent;
   let fixture: ComponentFixture<NotificationBellComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NotificationBellComponent]
+      imports: [NotificationBellComponent],
+      providers: [
+        ...commonTestProviders,
+        ...mockDialogProviders(),
+      ]
     })
     .compileComponents();
 

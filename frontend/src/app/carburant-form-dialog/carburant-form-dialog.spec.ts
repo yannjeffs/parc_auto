@@ -1,14 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CarburantFormDialogComponent } from './carburant-form-dialog';
+import { commonTestProviders, mockDialogProviders } from '../test-provider';
 
-describe('CarburantFormDialog', () => {
+describe('CarburantFormDialogComponent', () => {
   let component: CarburantFormDialogComponent;
   let fixture: ComponentFixture<CarburantFormDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CarburantFormDialogComponent]
+      imports: [CarburantFormDialogComponent],
+      providers: [
+        ...commonTestProviders,
+        ...mockDialogProviders(),
+      ]
     })
     .compileComponents();
 

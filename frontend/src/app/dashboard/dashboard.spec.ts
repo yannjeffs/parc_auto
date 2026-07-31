@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DashboardComponent } from './dashboard';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { commonTestProviders } from '../test-provider';
 
 describe('Dashboard', () => {
   let component: DashboardComponent;
@@ -8,7 +11,10 @@ describe('Dashboard', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardComponent]
+      imports: [DashboardComponent],
+      providers: [
+        ...commonTestProviders
+      ]
     })
     .compileComponents();
 

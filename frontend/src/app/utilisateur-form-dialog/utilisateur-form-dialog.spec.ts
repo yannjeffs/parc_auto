@@ -1,14 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UtilisateurFormDialogComponent } from './utilisateur-form-dialog';
+import { commonTestProviders, mockDialogProviders } from '../test-provider';
 
-describe('UtilisateurFormDialog', () => {
+describe('UtilisateurFormDialogComponent', () => {
   let component: UtilisateurFormDialogComponent;
   let fixture: ComponentFixture<UtilisateurFormDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UtilisateurFormDialogComponent]
+      imports: [UtilisateurFormDialogComponent],
+      providers: [
+        ...commonTestProviders,
+        ...mockDialogProviders(),
+      ]
     })
     .compileComponents();
 

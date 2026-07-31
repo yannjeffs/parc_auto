@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UtilisateurListComponent } from './utilisateur-list';
+import { commonTestProviders, mockDialogProviders } from '../test-provider';
 
 describe('UtilisateurListComponent', () => {
   let component: UtilisateurListComponent;
@@ -8,7 +9,11 @@ describe('UtilisateurListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UtilisateurListComponent]
+      imports: [UtilisateurListComponent],
+      providers: [
+        ...commonTestProviders,
+        ...mockDialogProviders(),
+      ]
     })
     .compileComponents();
 

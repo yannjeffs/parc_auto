@@ -37,7 +37,7 @@ export class AffectationDetailDialogComponent implements OnInit {
   private carburantService = inject(CarburantService);
   private maintenanceService = inject(MaintenanceService);
   private dialogRef = inject(MatDialogRef<AffectationDetailDialogComponent>);
-  data: AffectationDetailData = inject(MAT_DIALOG_DATA);
+  data: AffectationDetailData = inject(MAT_DIALOG_DATA, { optional: true }) || {};
 
   isLoading = true;
   pleins: PleinCarburant[] = [];

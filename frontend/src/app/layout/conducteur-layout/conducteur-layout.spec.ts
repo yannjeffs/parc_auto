@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ConducteurLayoutComponent } from './conducteur-layout';
+import { commonTestProviders } from '../../test-provider';
 
 describe('ConducteurLayoutComponent', () => {
   let component: ConducteurLayoutComponent;
@@ -8,7 +9,10 @@ describe('ConducteurLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ConducteurLayoutComponent]
+      imports: [ConducteurLayoutComponent],
+      providers: [
+        ...commonTestProviders
+      ]
     })
     .compileComponents();
 

@@ -1,14 +1,19 @@
+import { commonTestProviders, mockDialogProviders } from '../../test-provider';
 import { AffectationListComponent } from './affectation-list';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 
-describe('VehiculeListComponent', () => {
+describe('AffectationListComponent', () => {
   let component: AffectationListComponent;
   let fixture: ComponentFixture<AffectationListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AffectationListComponent]
+      imports: [AffectationListComponent],
+      providers: [
+        ...commonTestProviders,
+        ...mockDialogProviders(),
+      ]
     })
     .compileComponents();
 
