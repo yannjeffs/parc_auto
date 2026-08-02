@@ -1,0 +1,72 @@
+# render.yaml — Blueprint Render
+# ================================
+# À la racine du repo. Sur Render : New > Blueprint > sélectionne ce repo.
+# Render lit ce fichier, crée les services et redéploie automatiquement à
+# chaque push sur la branche connectée (main/master) — pas besoin d'écrire
+# de logique de déploiement dans GitHub Actions, Render s'en charge lui-même
+# en buildant directement le Dockerfile de chaque service.
+
+databases:
+  - name: convoy-db
+    plan: free
+    databaseName: parc_auto_db
+    user: parc_auto_user
+
+services:
+  - type: web
+    name: convoy-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/sante/
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DB_NAME
+        fromDatabase:
+          name: convoy-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: convoy-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: convoy-db
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: convoy-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: convoy-db
+          property: port
+      # À compléter toi-même dans le dashboard Render une fois les deux
+      # services créés (les URLs ne sont connues qu'après le premier déploiement) :
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      # Identifiants Cloudflare R2 (voir étape 1) — à saisir manuellement,
+      # jamais commités dans le repo :
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET_NAME
+        value: convoy-media
+      - key: R2_ENDPOINT_URL
+        sync: false
+
+  - type: web
+    name: convoy-frontend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend

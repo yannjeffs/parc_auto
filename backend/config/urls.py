@@ -8,9 +8,11 @@ from rest_framework_simplejwt.views import (
     TokenBlacklistView,
 )
 from config.me_view import MeView
+from config.sante_view import SanteView
 
 urlpatterns = [
     path("", include("django_prometheus.urls")),  # expose /metrics
+    path("api/sante/", SanteView.as_view(), name="sante"),
     path("admin/", admin.site.urls),
 
     path("api/", include("vehicules.urls")),

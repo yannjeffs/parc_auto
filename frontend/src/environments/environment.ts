@@ -1,4 +1,6 @@
 export const environment = {
-  production: false,
-  apiUrl: 'http://127.0.0.1:8000/api',
+  production: true,
+  // Remplace par l'URL réelle de ton service backend une fois Render l'aura
+  // créé (visible dans le dashboard Render, juste après le premier déploiement).
+  apiUrl: 'https://convoy-backend.onrender.com/api',
 };

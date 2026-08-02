@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 from decouple import config
 
@@ -21,17 +22,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k86+_9gah7d&-6n9j3s$e(h4f!2_ne=gly0wgh=5*k#tb^v)c%'
+# SECRET_KEY = 'django-insecure-k86+_9gah7d&-6n9j3s$e(h4f!2_ne=gly0wgh=5*k#tb^v)c%'
+SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "host.docker.internal",
-    # ... tes autres hosts
-]
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='127.0.0.1,localhost,host.docker.internal',
+    cast=lambda v: [h.strip() for h in v.split(',') if h.strip()],
+)
+render_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if render_hostname:
+    ALLOWED_HOSTS.append(render_hostname)
 
 from datetime import timedelta
 
@@ -51,13 +56,15 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
     'django_prometheus',
+    'storages',
     
     'vehicules',
     'conducteurs',
     'maintenance',
     'carburant',
     'documents',
-    'rapports'
+    'rapports',
+    'comptes',
 ]
 
 REST_FRAMEWORK = {
@@ -78,6 +85,7 @@ MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -131,9 +139,21 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",  # port par défaut d'Angular
-]
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:4200',
+    cast=lambda v: [o.strip() for o in v.split(',') if o.strip()],
+)
+
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='',
+    cast=lambda v: [o.strip() for o in v.split(',') if o.strip()],
+)
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 
 
 # Password validation
@@ -170,4 +190,24 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+}
+
+AWS_ACCESS_KEY_ID = config('R2_ACCESS_KEY_ID', default='')
+AWS_SECRET_ACCESS_KEY = config('R2_SECRET_ACCESS_KEY', default='')
+AWS_STORAGE_BUCKET_NAME = config('R2_BUCKET_NAME', default='convoy-media')
+AWS_S3_ENDPOINT_URL = config('R2_ENDPOINT_URL', default='')
+AWS_S3_REGION_NAME = 'auto'
+AWS_S3_ADDRESSING_STYLE = 'virtual'
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_FILE_OVERWRITE = False
